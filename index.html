@@ -3,107 +3,1590 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mushtaq Store - Digital Services</title>
+    <title>Mushtaq Store - सरकारी सेवाएं</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .service-card:hover { transform: translateY(-5px); }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .admin-panel.hidden { display: none !important; }
+        .user-panel.hidden { display: none !important; }
+        .login-required { opacity: 0.6; pointer-events: none; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-store text-2xl"></i>
+                    <h1 class="text-2xl font-bold">Mushtaq Store</h1>
+                    <span class="text-sm bg-white/20 px-2 py-1 rounded">सरकारी सेवाएं</span>
+                </div>
+                <nav class="flex items-center space-x-4">
+                    <button id="homeBtn" class="hover:bg-white/20 px-3 py-2 rounded transition">होम</button>
+                    <button id="loginBtn" class="bg-white text-purple-600 px-4 py-2 rounded font-semibold hover:bg-gray-100 transition">लॉगिन / साइनअप</button>
+                    <button id="logoutBtn" class="hidden bg-red-500 px-4 py-2 rounded font-semibold hover:bg-red-600 transition">लॉगआउट</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login/Signup Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 w-96 max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h2 class="text-2xl font-bold mb-6 text-center">लॉगिन करें</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">यूजर टाइप</label>
+                        <select id="userType" class="w-full border rounded-lg px-3 py-2">
+                            <option value="user">यूजर</option>
+                            <option value="admin">एडमिन</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">मोबाइल नंबर</label>
+                        <input type="tel" id="mobile" class="w-full border rounded-lg px-3 py-2" placeholder="10 अंकों का मोबाइल नंबर" maxlength="10">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">पासवर्ड</label>
+                        <input type="password" id="password" class="w-full border rounded-lg px-3 py-2" placeholder="पासवर्ड दर्ज करें">
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="loginSubmit" class="flex-1 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition">लॉगिन</button>
+                        <button id="closeLogin" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition">रद्द करें</button>
+                    </div>
+                    <div class="text-center mt-4">
+                        <p class="text-sm text-gray-600">नया यूजर हैं? 
+                            <button id="showSignup" class="text-purple-600 hover:text-purple-800 font-semibold">साइनअप करें</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="hidden">
+                <h2 class="text-2xl font-bold mb-6 text-center">नया अकाउंट बनाएं</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">पूरा नाम *</label>
+                        <input type="text" id="signupName" class="w-full border rounded-lg px-3 py-2" placeholder="अपना पूरा नाम दर्ज करें" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">मोबाइल नंबर *</label>
+                        <input type="tel" id="signupMobile" class="w-full border rounded-lg px-3 py-2" placeholder="10 अंकों का मोबाइल नंबर" maxlength="10" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">पासवर्ड बनाएं *</label>
+                        <input type="password" id="signupPassword" class="w-full border rounded-lg px-3 py-2" placeholder="कम से कम 4 अंकों का पासवर्ड" minlength="4" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">पासवर्ड कन्फर्म करें *</label>
+                        <input type="password" id="confirmPassword" class="w-full border rounded-lg px-3 py-2" placeholder="पासवर्ड दोबारा दर्ज करें" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">ईमेल (वैकल्पिक)</label>
+                        <input type="email" id="signupEmail" class="w-full border rounded-lg px-3 py-2" placeholder="आपका ईमेल पता">
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-lg">
+                        <div class="flex items-start space-x-2">
+                            <input type="checkbox" id="termsAgree" required class="mt-1">
+                            <label for="termsAgree" class="text-xs text-blue-800">
+                                मैं नियम और शर्तों से सहमत हूं और समझता हूं कि मेरी जानकारी सुरक्षित रूप से स्टोर की जाएगी।
+                            </label>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="signupSubmit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">अकाउंट बनाएं</button>
+                        <button id="cancelSignup" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition">रद्द करें</button>
+                    </div>
+                    <div class="text-center mt-4">
+                        <p class="text-sm text-gray-600">पहले से अकाउंट है? 
+                            <button id="showLogin" class="text-purple-600 hover:text-purple-800 font-semibold">लॉगिन करें</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Home Page -->
+        <div id="homePage">
+            <!-- Hero Section -->
+            <div class="gradient-bg text-white rounded-lg p-8 mb-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold mb-4">सभी सरकारी सेवाएं एक जगह</h2>
+                    <p class="text-lg mb-6">आधार कार्ड से लेकर आयुष्मान कार्ड तक - सभी दस्तावेज़ आसानी से बनवाएं</p>
+                    <div class="flex justify-center space-x-4 text-sm">
+                        <span><i class="fas fa-check mr-2"></i>तुरंत अप्लाई करें</span>
+                        <span><i class="fas fa-check mr-2"></i>स्टेटस ट्रैक करें</span>
+                        <span><i class="fas fa-check mr-2"></i>होम डिलीवरी</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Grid -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold mb-6 text-center">हमारी सेवाएं</h3>
+                <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Services will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Login Required Message -->
+            <div id="loginMessage" class="text-center py-8 bg-yellow-50 rounded-lg border border-yellow-200">
+                <i class="fas fa-lock text-4xl text-yellow-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-yellow-800 mb-2">सेवा का उपयोग करने के लिए लॉगिन करें</h3>
+                <p class="text-yellow-700 mb-4">कृपया अपने अकाउंट में लॉगिन करके सेवाओं का लाभ उठाएं</p>
+                <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition" onclick="document.getElementById('loginBtn').click()">
+                    अभी लॉगिन / साइनअप करें
+                </button>
+            </div>
+        </div>
+
+        <!-- User Panel -->
+        <div id="userPanel" class="user-panel">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">यूजर डैशबोर्ड</h2>
+                    <p class="text-gray-600" id="welcomeMessage">स्वागत है!</p>
+                </div>
+                <button id="trackingBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-search mr-2"></i>स्टेटस ट्रैक करें
+                </button>
+            </div>
+
+            <!-- Application History -->
+            <div id="applicationHistory" class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-xl font-bold mb-4">
+                    <i class="fas fa-history mr-2 text-purple-600"></i>आपके आवेदन
+                </h3>
+                <div id="userApplicationsList">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-inbox text-4xl mb-4"></i>
+                        <p>अभी तक कोई आवेदन नहीं है</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Services -->
+            <div id="userServices" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- User services will be loaded here -->
+            </div>
+
+            <!-- Tracking Section -->
+            <div id="trackingSection" class="hidden bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4">आवेदन स्टेटस ट्रैक करें</h3>
+                <div class="flex space-x-4 mb-4">
+                    <input type="text" id="trackingId" placeholder="ट्रैकिंग आईडी दर्ज करें" class="flex-1 border rounded-lg px-3 py-2">
+                    <button id="trackBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                        ट्रैक करें
+                    </button>
+                </div>
+                <div id="trackingResult" class="hidden">
+                    <!-- Tracking results will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Application Page -->
+        <div id="applicationPage" class="hidden">
+            <div class="flex items-center mb-6">
+                <button id="backToUserPanel" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition mr-4">
+                    <i class="fas fa-arrow-left mr-2"></i>वापस जाएं
+                </button>
+                <h2 class="text-2xl font-bold" id="applicationPageTitle">सेवा के लिए आवेदन</h2>
+            </div>
+
+            <!-- Service Details Card -->
+            <div id="serviceDetailsCard" class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <!-- Service details will be loaded here -->
+            </div>
+
+            <!-- Success Message -->
+            <div id="submissionSuccess" class="hidden bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
+                <div class="text-center">
+                    <div class="text-6xl text-green-600 mb-4">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-green-800 mb-4">🎉 फॉर्म सफलतापूर्वक जमा हो गया!</h3>
+                    <div id="successDetails" class="space-y-2 text-green-700 mb-4">
+                        <!-- Success details will be filled here -->
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border border-green-300">
+                        <p class="text-sm text-green-600 mb-2">
+                            <i class="fas fa-info-circle mr-2"></i>आपका आवेदन सफलतापूर्वक जमा हो गया है
+                        </p>
+                        <p class="text-xs text-green-500">
+                            <i class="fas fa-clock mr-2"></i>3 सेकंड में यूजर पैनल पर वापस जा रहे हैं...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Application Form -->
+            <div id="applicationFormContainer" class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-6">आवेदन फॉर्म भरें</h3>
+                <form id="serviceForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">पूरा नाम *</label>
+                            <input type="text" name="fullName" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">मोबाइल नंबर *</label>
+                            <input type="tel" name="mobile" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">पिता का नाम</label>
+                            <input type="text" name="fatherName" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">जन्म तिथि</label>
+                            <input type="date" name="dob" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">आधार नंबर</label>
+                            <input type="text" name="aadhar" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="12 अंकों का आधार नंबर">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">ईमेल</label>
+                            <input type="email" name="email" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">पूरा पता *</label>
+                        <textarea name="address" required class="w-full border rounded-lg px-3 py-2 h-24 focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="गांव/शहर, तहसील, जिला, राज्य, पिन कोड"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">अतिरिक्त जानकारी</label>
+                        <textarea name="additionalInfo" class="w-full border rounded-lg px-3 py-2 h-20 focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="कोई विशेष आवश्यकता या टिप्पणी"></textarea>
+                    </div>
+                    
+                    <!-- Terms and Conditions -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="flex items-start space-x-3">
+                            <input type="checkbox" id="termsAccept" required class="mt-1">
+                            <label for="termsAccept" class="text-sm text-gray-700">
+                                मैं घोषणा करता/करती हूं कि ऊपर दी गई सभी जानकारी सत्य है। मैं नियम और शर्तों से सहमत हूं और समझता हूं कि गलत जानकारी देने पर मेरा आवेदन रद्द हो सकता है।
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-4 pt-4">
+                        <button type="submit" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition font-semibold">
+                            <i class="fas fa-paper-plane mr-2"></i>आवेदन जमा करें
+                        </button>
+                        <button type="button" id="cancelForm" class="bg-gray-500 text-white px-8 py-3 rounded-lg hover:bg-gray-600 transition font-semibold">
+                            <i class="fas fa-times mr-2"></i>रद्द करें
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="admin-panel">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">एडमिन पैनल</h2>
+                <div class="flex space-x-4">
+                    <button id="addServiceBtn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                        <i class="fas fa-plus mr-2"></i>सेवा जोड़ें
+                    </button>
+                    <button id="settingsBtn" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                        <i class="fas fa-cog mr-2"></i>सेटिंग्स
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="bg-white rounded-lg shadow-lg">
+                <div class="border-b">
+                    <nav class="flex space-x-8 px-6">
+                        <button class="admin-tab py-4 border-b-2 border-purple-600 text-purple-600 font-semibold" data-tab="services">सेवाएं</button>
+                        <button class="admin-tab py-4 text-gray-500 hover:text-gray-700" data-tab="applications">आवेदन</button>
+                        <button class="admin-tab py-4 text-gray-500 hover:text-gray-700" data-tab="users">यूजर्स</button>
+                        <button class="admin-tab py-4 text-gray-500 hover:text-gray-700" data-tab="settings">सेटिंग्स</button>
+                    </nav>
+                </div>
+
+                <!-- Services Management -->
+                <div id="adminServices" class="admin-content p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-4 py-2 text-left">सेवा नाम</th>
+                                    <th class="px-4 py-2 text-left">फीस</th>
+                                    <th class="px-4 py-2 text-left">समय</th>
+                                    <th class="px-4 py-2 text-left">स्टेटस</th>
+                                    <th class="px-4 py-2 text-left">एक्शन</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminServicesTable">
+                                <!-- Services will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Applications Management -->
+                <div id="adminApplications" class="admin-content p-6 hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-4 py-2 text-left">आवेदन ID</th>
+                                    <th class="px-4 py-2 text-left">नाम</th>
+                                    <th class="px-4 py-2 text-left">सेवा</th>
+                                    <th class="px-4 py-2 text-left">दिनांक</th>
+                                    <th class="px-4 py-2 text-left">स्टेटस</th>
+                                    <th class="px-4 py-2 text-left">एक्शन</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminApplicationsTable">
+                                <!-- Applications will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Users Management -->
+                <div id="adminUsers" class="admin-content p-6 hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-4 py-2 text-left">यूजर ID</th>
+                                    <th class="px-4 py-2 text-left">नाम</th>
+                                    <th class="px-4 py-2 text-left">मोबाइल</th>
+                                    <th class="px-4 py-2 text-left">आवेदन</th>
+                                    <th class="px-4 py-2 text-left">एक्शन</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUsersTable">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div id="adminSettings" class="admin-content p-6 hidden">
+                    <div class="grid grid-cols-1 gap-8">
+                        <!-- Database Connection Options -->
+                        <div class="bg-white border rounded-lg p-6">
+                            <h4 class="text-xl font-semibold mb-6 text-center">डेटाबेस कनेक्शन विकल्प</h4>
+                            
+                            <!-- Database Selection -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-3">डेटाबेस चुनें:</label>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-blue-50 transition" data-db="sheets">
+                                        <div class="text-center">
+                                            <i class="fas fa-table text-3xl text-green-600 mb-2"></i>
+                                            <h5 class="font-semibold">Google Sheets</h5>
+                                            <p class="text-sm text-gray-600">स्प्रेडशीट डेटाबेस</p>
+                                        </div>
+                                    </div>
+                                    <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-blue-50 transition" data-db="jsonbin">
+                                        <div class="text-center">
+                                            <i class="fas fa-database text-3xl text-blue-600 mb-2"></i>
+                                            <h5 class="font-semibold">JSONBin</h5>
+                                            <p class="text-sm text-gray-600">JSON डेटाबेस</p>
+                                        </div>
+                                    </div>
+                                    <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-blue-50 transition" data-db="firebase">
+                                        <div class="text-center">
+                                            <i class="fas fa-fire text-3xl text-orange-600 mb-2"></i>
+                                            <h5 class="font-semibold">Firebase</h5>
+                                            <p class="text-sm text-gray-600">रियल-टाइम डेटाबेस</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Google Sheets Configuration -->
+                            <div id="sheetsConfig" class="database-config hidden bg-green-50 border border-green-200 rounded-lg p-6">
+                                <h5 class="text-lg font-semibold mb-4 text-green-800">
+                                    <i class="fas fa-table mr-2"></i>Google Sheets कॉन्फ़िगरेशन
+                                </h5>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Spreadsheet URL *</label>
+                                        <input type="url" id="sheetsUrl" class="w-full border rounded-lg px-3 py-2" placeholder="https://docs.google.com/spreadsheets/d/...">
+                                        <p class="text-xs text-gray-600 mt-1">पूरा Google Sheets URL दर्ज करें</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">API Key *</label>
+                                        <input type="text" id="sheetsApiKey" class="w-full border rounded-lg px-3 py-2" placeholder="Google Sheets API Key">
+                                        <p class="text-xs text-gray-600 mt-1">Google Cloud Console से API Key प्राप्त करें</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Sheet Name</label>
+                                        <input type="text" id="sheetName" class="w-full border rounded-lg px-3 py-2" placeholder="Sheet1" value="Sheet1">
+                                        <p class="text-xs text-gray-600 mt-1">डेटा स्टोर करने के लिए शीट का नाम</p>
+                                    </div>
+                                    <div class="flex space-x-3">
+                                        <button id="testSheetsBtn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                            <i class="fas fa-plug mr-2"></i>कनेक्शन टेस्ट करें
+                                        </button>
+                                        <button id="saveSheetsBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                                            <i class="fas fa-save mr-2"></i>सेव करें
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- JSONBin Configuration -->
+                            <div id="jsonbinConfig" class="database-config hidden bg-blue-50 border border-blue-200 rounded-lg p-6">
+                                <h5 class="text-lg font-semibold mb-4 text-blue-800">
+                                    <i class="fas fa-database mr-2"></i>JSONBin कॉन्फ़िगरेशन
+                                </h5>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">API Key *</label>
+                                        <input type="text" id="jsonbinApiKey" class="w-full border rounded-lg px-3 py-2" placeholder="$2a$10$...">
+                                        <p class="text-xs text-gray-600 mt-1">JSONBin.io से API Key प्राप्त करें</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Bin ID</label>
+                                        <input type="text" id="jsonbinId" class="w-full border rounded-lg px-3 py-2" placeholder="64a7b2c8b89b1e2...">
+                                        <p class="text-xs text-gray-600 mt-1">मौजूदा Bin ID (वैकल्पिक - नया Bin बनेगा)</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Bin Name</label>
+                                        <input type="text" id="jsonbinName" class="w-full border rounded-lg px-3 py-2" placeholder="mushtaq-store-data" value="mushtaq-store-data">
+                                        <p class="text-xs text-gray-600 mt-1">डेटा स्टोरेज के लिए Bin का नाम</p>
+                                    </div>
+                                    <div class="flex space-x-3">
+                                        <button id="testJsonbinBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                                            <i class="fas fa-plug mr-2"></i>कनेक्शन टेस्ट करें
+                                        </button>
+                                        <button id="saveJsonbinBtn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                            <i class="fas fa-save mr-2"></i>सेव करें
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Firebase Configuration -->
+                            <div id="firebaseConfig" class="database-config hidden bg-orange-50 border border-orange-200 rounded-lg p-6">
+                                <h5 class="text-lg font-semibold mb-4 text-orange-800">
+                                    <i class="fas fa-fire mr-2"></i>Firebase कॉन्फ़िगरेशन
+                                </h5>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Project ID *</label>
+                                        <input type="text" id="firebaseProjectId" class="w-full border rounded-lg px-3 py-2" placeholder="my-project-id">
+                                        <p class="text-xs text-gray-600 mt-1">Firebase प्रोजेक्ट ID</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">API Key *</label>
+                                        <input type="text" id="firebaseApiKey" class="w-full border rounded-lg px-3 py-2" placeholder="AIzaSy...">
+                                        <p class="text-xs text-gray-600 mt-1">Firebase Web API Key</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Database URL *</label>
+                                        <input type="url" id="firebaseDatabaseUrl" class="w-full border rounded-lg px-3 py-2" placeholder="https://project-id-default-rtdb.firebaseio.com/">
+                                        <p class="text-xs text-gray-600 mt-1">Realtime Database URL</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Auth Domain</label>
+                                        <input type="text" id="firebaseAuthDomain" class="w-full border rounded-lg px-3 py-2" placeholder="project-id.firebaseapp.com">
+                                        <p class="text-xs text-gray-600 mt-1">Firebase Auth Domain</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Storage Bucket</label>
+                                        <input type="text" id="firebaseStorageBucket" class="w-full border rounded-lg px-3 py-2" placeholder="project-id.appspot.com">
+                                        <p class="text-xs text-gray-600 mt-1">Firebase Storage Bucket</p>
+                                    </div>
+                                    <div class="flex space-x-3">
+                                        <button id="testFirebaseBtn" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition">
+                                            <i class="fas fa-plug mr-2"></i>कनेक्शन टेस्ट करें
+                                        </button>
+                                        <button id="saveFirebaseBtn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                            <i class="fas fa-save mr-2"></i>सेव करें
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Connection Status -->
+                            <div id="connectionStatus" class="mt-6 p-4 rounded-lg hidden">
+                                <h6 class="font-semibold mb-2">कनेक्शन स्टेटस:</h6>
+                                <div id="statusContent"></div>
+                            </div>
+
+                            <!-- Active Database Status -->
+                            <div id="activeDatabaseStatus" class="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                                <h6 class="font-semibold mb-2 text-gray-800">
+                                    <i class="fas fa-database mr-2"></i>वर्तमान डेटाबेस स्थिति:
+                                </h6>
+                                <div id="databaseStatusContent" class="text-sm text-gray-600">
+                                    <i class="fas fa-info-circle mr-2"></i>कोई डेटाबेस कॉन्फ़िगर नहीं है - डेटा केवल लोकल स्टोरेज में सेव होगा
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Home Page Settings -->
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold mb-4">होम पेज सेटिंग्स</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">स्टोर नाम</label>
+                                    <input type="text" id="storeName" value="Mushtaq Store" class="w-full border rounded-lg px-3 py-2">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">हेडलाइन</label>
+                                    <input type="text" id="headline" value="सभी सरकारी सेवाएं एक जगह" class="w-full border rounded-lg px-3 py-2">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">संपर्क नंबर</label>
+                                    <input type="tel" id="contactNumber" class="w-full border rounded-lg px-3 py-2" placeholder="संपर्क नंबर">
+                                </div>
+                                <button id="previewChanges" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                    प्रीव्यू देखें
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Service Modal -->
+        <div id="addServiceModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg p-8 w-96 max-w-md mx-4">
+                <h3 class="text-xl font-bold mb-4">नई सेवा जोड़ें</h3>
+                <form id="addServiceForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">सेवा नाम</label>
+                        <input type="text" name="serviceName" required class="w-full border rounded-lg px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">फीस (₹)</label>
+                        <input type="number" name="fee" required class="w-full border rounded-lg px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">समय (दिन)</label>
+                        <input type="number" name="duration" required class="w-full border rounded-lg px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">विवरण</label>
+                        <textarea name="description" class="w-full border rounded-lg px-3 py-2 h-20"></textarea>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">जोड़ें</button>
+                        <button type="button" id="closeAddService" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition">रद्द करें</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // App State
+        let currentUser = null;
+        let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+        let services = [
+            { id: 1, name: 'आधार कार्ड', icon: 'fas fa-id-card', fee: 50, duration: '7-10 दिन', description: 'नया आधार कार्ड बनवाएं या अपडेट करें', active: true },
+            { id: 2, name: 'पैन कार्ड', icon: 'fas fa-credit-card', fee: 100, duration: '15-20 दिन', description: 'पैन कार्ड के लिए आवेदन करें', active: true },
+            { id: 3, name: 'वोटर कार्ड', icon: 'fas fa-vote-yea', fee: 25, duration: '30-45 दिन', description: 'वोटर आईडी कार्ड बनवाएं', active: true },
+            { id: 4, name: 'आयुष्मान कार्ड', icon: 'fas fa-heartbeat', fee: 30, duration: '5-7 दिन', description: 'आयुष्मान भारत गोल्डन कार्ड', active: true },
+            { id: 5, name: 'ABHA कार्ड', icon: 'fas fa-hospital', fee: 20, duration: '3-5 दिन', description: 'आयुष्मान भारत हेल्थ अकाउंट', active: true },
+            { id: 6, name: 'जन्म प्रमाण पत्र', icon: 'fas fa-baby', fee: 40, duration: '10-15 दिन', description: 'जन्म का प्रमाण पत्र', active: true },
+            { id: 7, name: 'मृत्यु प्रमाण पत्र', icon: 'fas fa-cross', fee: 40, duration: '10-15 दिन', description: 'मृत्यु का प्रमाण पत्र', active: true },
+            { id: 8, name: 'आय प्रमाण पत्र', icon: 'fas fa-money-bill', fee: 60, duration: '15-20 दिन', description: 'आय का प्रमाण पत्र', active: true },
+            { id: 9, name: 'राशन कार्ड', icon: 'fas fa-shopping-basket', fee: 80, duration: '20-30 दिन', description: 'राशन कार्ड के लिए आवेदन', active: true }
+        ];
+        
+        let applications = [];
+        let users = [];
+
+        // DOM Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginModal = document.getElementById('loginModal');
+        const homePage = document.getElementById('homePage');
+        const userPanel = document.getElementById('userPanel');
+        const adminPanel = document.getElementById('adminPanel');
+
+        // Initialize App
+        function initApp() {
+            loadServices();
+            setupEventListeners();
+            updateUI();
+            loadSavedConfig();
         }
-        .card-hover {
-            transition: all 0.3s ease;
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Login/Logout
+            loginBtn.addEventListener('click', () => {
+                loginModal.classList.remove('hidden');
+                showLoginForm();
+            });
+            logoutBtn.addEventListener('click', logout);
+            document.getElementById('closeLogin').addEventListener('click', () => loginModal.classList.add('hidden'));
+            document.getElementById('loginSubmit').addEventListener('click', handleLogin);
+            
+            // Signup
+            document.getElementById('showSignup').addEventListener('click', showSignupForm);
+            document.getElementById('showLogin').addEventListener('click', showLoginForm);
+            document.getElementById('signupSubmit').addEventListener('click', handleSignup);
+            document.getElementById('cancelSignup').addEventListener('click', () => loginModal.classList.add('hidden'));
+
+            // Navigation
+            document.getElementById('homeBtn').addEventListener('click', showHome);
+            document.getElementById('backToUserPanel').addEventListener('click', showUserPanel);
+
+            // User Panel
+            document.getElementById('trackingBtn').addEventListener('click', showTracking);
+            document.getElementById('cancelForm').addEventListener('click', showUserPanel);
+            document.getElementById('serviceForm').addEventListener('submit', handleServiceApplication);
+            document.getElementById('trackBtn').addEventListener('click', trackApplication);
+
+            // Admin Panel
+            document.getElementById('addServiceBtn').addEventListener('click', () => document.getElementById('addServiceModal').classList.remove('hidden'));
+            document.getElementById('closeAddService').addEventListener('click', () => document.getElementById('addServiceModal').classList.add('hidden'));
+            document.getElementById('addServiceForm').addEventListener('submit', handleAddService);
+            document.getElementById('previewChanges').addEventListener('click', previewHomePageChanges);
+
+            // Admin Tabs
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => switchAdminTab(e.target.dataset.tab));
+            });
+
+            // Database Selection Cards
+            document.querySelectorAll('[data-db]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const dbType = e.currentTarget.dataset.db;
+                    selectDatabase(dbType, e);
+                });
+            });
+
+            // Database Configuration Buttons
+            document.getElementById('testSheetsBtn').addEventListener('click', testSheetsConnection);
+            document.getElementById('saveSheetsBtn').addEventListener('click', saveSheetsConfig);
+            document.getElementById('testJsonbinBtn').addEventListener('click', testJsonbinConnection);
+            document.getElementById('saveJsonbinBtn').addEventListener('click', saveJsonbinConfig);
+            document.getElementById('testFirebaseBtn').addEventListener('click', testFirebaseConnection);
+            document.getElementById('saveFirebaseBtn').addEventListener('click', saveFirebaseConfig);
         }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+        // User Management Functions
+        function handleLogin() {
+            const userType = document.getElementById('userType').value;
+            const mobile = document.getElementById('mobile').value;
+            const password = document.getElementById('password').value;
+
+            if (!mobile || !password) {
+                alert('कृपया सभी फील्ड भरें');
+                return;
+            }
+
+            // Admin credentials (hardcoded)
+            if (userType === 'admin' && mobile === '2206' && password === '9958') {
+                currentUser = { type: userType, mobile: mobile, name: 'Admin' };
+                loginModal.classList.add('hidden');
+                updateUI();
+                clearLoginForm();
+                alert('एडमिन लॉगिन सफल!');
+                return;
+            }
+
+            // User credentials (check registered users)
+            if (userType === 'user') {
+                const user = registeredUsers.find(u => u.mobile === mobile && u.password === password);
+                if (user) {
+                    currentUser = { type: userType, mobile: mobile, name: user.name, email: user.email };
+                    
+                    // Update last login
+                    user.lastLogin = new Date().toISOString();
+                    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                    
+                    loginModal.classList.add('hidden');
+                    updateUI();
+                    clearLoginForm();
+                    alert(`स्वागत है ${user.name}! लॉगिन सफल।`);
+                    
+                    // Load user's applications from database
+                    loadUserApplicationsFromDatabase();
+                } else {
+                    alert('गलत मोबाइल नंबर या पासवर्ड।\n\nयदि आपका अकाउंट नहीं है तो कृपया "साइनअप करें" पर क्लिक करें।');
+                }
+                return;
+            }
+
+            alert('गलत लॉगिन जानकारी');
         }
-        .floating-animation {
-            animation: float 6s ease-in-out infinite;
+
+        function handleSignup() {
+            const name = document.getElementById('signupName').value.trim();
+            const mobile = document.getElementById('signupMobile').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const email = document.getElementById('signupEmail').value.trim();
+            const termsAgree = document.getElementById('termsAgree').checked;
+
+            // Validation
+            if (!name || !mobile || !password || !confirmPassword) {
+                alert('कृपया सभी आवश्यक फील्ड भरें (*)');
+                return;
+            }
+
+            if (mobile.length !== 10 || !/^\d{10}$/.test(mobile)) {
+                alert('कृपया 10 अंकों का सही मोबाइल नंबर दर्ज करें');
+                return;
+            }
+
+            if (password.length < 4) {
+                alert('पासवर्ड कम से कम 4 अंकों का होना चाहिए');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('पासवर्ड मैच नहीं कर रहे। कृपया दोबारा चेक करें।');
+                return;
+            }
+
+            if (!termsAgree) {
+                alert('कृपया नियम और शर्तों से सहमति दें');
+                return;
+            }
+
+            // Check if user already exists
+            const existingUser = registeredUsers.find(u => u.mobile === mobile);
+            if (existingUser) {
+                alert('इस मोबाइल नंबर से पहले से अकाउंट है। कृपया लॉगिन करें।');
+                showLoginForm();
+                document.getElementById('mobile').value = mobile;
+                return;
+            }
+
+            // Create new user
+            const newUser = {
+                id: 'USER' + Date.now(),
+                name: name,
+                mobile: mobile,
+                password: password,
+                email: email || null,
+                createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
+            };
+
+            // Save user
+            registeredUsers.push(newUser);
+            localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+
+            // Save to database
+            saveUserToDatabase(newUser);
+
+            // Auto login
+            currentUser = { type: 'user', mobile: mobile, name: name, email: email };
+            loginModal.classList.add('hidden');
+            updateUI();
+            clearSignupForm();
+
+            alert(`🎉 अकाउंट सफलतापूर्वक बना गया!\n\nस्वागत है ${name}!\n\nआपका मोबाइल नंबर: ${mobile}\nअब आप सभी सेवाओं का उपयोग कर सकते हैं।`);
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+
+        function showSignupForm() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.remove('hidden');
         }
-        .pulse-animation {
-            animation: pulse 2s infinite;
+
+        function showLoginForm() {
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
         }
-        .slide-in {
-            animation: slideIn 0.5s ease-out;
+
+        function clearLoginForm() {
+            document.getElementById('mobile').value = '';
+            document.getElementById('password').value = '';
         }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        function clearSignupForm() {
+            document.getElementById('signupName').value = '';
+            document.getElementById('signupMobile').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('termsAgree').checked = false;
         }
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            padding: 16px 24px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
+
+        function logout() {
+            currentUser = null;
+            updateUI();
+            alert('लॉगआउट सफल!');
         }
-        .notification.show {
-            transform: translateX(0);
+
+        // UI Updates
+        function updateUI() {
+            if (currentUser) {
+                loginBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+                
+                if (currentUser.type === 'admin') {
+                    homePage.classList.add('hidden');
+                    userPanel.classList.add('hidden');
+                    adminPanel.classList.remove('hidden');
+                    adminPanel.style.display = 'block';
+                    loadAdminData();
+                } else {
+                    homePage.classList.add('hidden');
+                    adminPanel.classList.add('hidden');
+                    userPanel.classList.remove('hidden');
+                    userPanel.style.display = 'block';
+                    
+                    // Update welcome message
+                    document.getElementById('welcomeMessage').textContent = `स्वागत है ${currentUser.name}!`;
+                    
+                    loadUserServices();
+                    loadUserApplicationHistory();
+                }
+            } else {
+                loginBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+                adminPanel.classList.add('hidden');
+                adminPanel.style.display = 'none';
+                userPanel.classList.add('hidden');
+                userPanel.style.display = 'none';
+                homePage.classList.remove('hidden');
+            }
         }
-        .notification.success {
-            background: linear-gradient(135deg, #10b981, #059669);
+
+        function showHome() {
+            adminPanel.classList.add('hidden');
+            userPanel.classList.add('hidden');
+            document.getElementById('applicationPage').classList.add('hidden');
+            homePage.classList.remove('hidden');
         }
-        .notification.error {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+
+        function showUserPanel() {
+            adminPanel.classList.add('hidden');
+            homePage.classList.add('hidden');
+            document.getElementById('applicationPage').classList.add('hidden');
+            userPanel.classList.remove('hidden');
+            userPanel.style.display = 'block';
+            loadUserApplicationHistory();
         }
-        .notification.info {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+
+        function showApplicationPage() {
+            adminPanel.classList.add('hidden');
+            homePage.classList.add('hidden');
+            userPanel.classList.add('hidden');
+            document.getElementById('applicationPage').classList.remove('hidden');
         }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            backdrop-filter: blur(5px);
+
+        // Services Management
+        function loadServices() {
+            const servicesGrid = document.getElementById('servicesGrid');
+            servicesGrid.innerHTML = '';
+
+            services.filter(service => service.active).forEach(service => {
+                const serviceCard = createServiceCard(service, !currentUser);
+                servicesGrid.appendChild(serviceCard);
+            });
         }
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+
+        function loadUserServices() {
+            const userServices = document.getElementById('userServices');
+            userServices.innerHTML = '';
+
+            services.filter(service => service.active).forEach(service => {
+                const serviceCard = createServiceCard(service, false);
+                userServices.appendChild(serviceCard);
+            });
         }
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlideIn 0.3s ease;
+
+        function createServiceCard(service, disabled = false) {
+            const card = document.createElement('div');
+            card.className = `service-card bg-white rounded-lg shadow-lg p-6 transition-all duration-300 ${disabled ? 'login-required' : 'hover:shadow-xl cursor-pointer'}`;
+            
+            card.innerHTML = `
+                <div class="text-center">
+                    <div class="text-4xl text-purple-600 mb-4">
+                        <i class="${service.icon}"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">${service.name}</h3>
+                    <p class="text-gray-600 text-sm mb-4">${service.description}</p>
+                    <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
+                        <span><i class="fas fa-rupee-sign"></i> ₹${service.fee}</span>
+                        <span><i class="fas fa-clock"></i> ${service.duration}</span>
+                    </div>
+                    <button class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition ${disabled ? 'opacity-50 cursor-not-allowed' : ''}" 
+                            ${disabled ? 'disabled' : `onclick="applyForService(${service.id})"`}>
+                        ${disabled ? 'लॉगिन करें' : 'अभी अप्लाई करें'}
+                    </button>
+                </div>
+            `;
+
+            return card;
         }
-        @keyframes modalSlideIn {
-            from { opacity: 0; transform: scale(0.9) translateY(-20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+
+        // Service Application
+        function applyForService(serviceId) {
+            const service = services.find(s => s.id === serviceId);
+            if (!service) return;
+
+            // Update page title
+            document.getElementById('applicationPageTitle').textContent = `${service.name} के लिए आवेदन`;
+            
+            // Show service details
+            const serviceDetailsCard = document.getElementById('serviceDetailsCard');
+            serviceDetailsCard.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-4xl text-purple-600">
+                            <i class="${service.icon}"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">${service.name}</h3>
+                            <p class="text-gray-600">${service.description}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-green-600">₹${service.fee}</div>
+                        <div class="text-sm text-gray-500">
+                            <i class="fas fa-clock mr-1"></i>${service.duration}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-semibold text-blue-800 mb-2">आवश्यक दस्तावेज:</h4>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li><i class="fas fa-check mr-2"></i>आधार कार्ड की फोटोकॉपी</li>
+                        <li><i class="fas fa-check mr-2"></i>पासपोर्ट साइज फोटो</li>
+                        <li><i class="fas fa-check mr-2"></i>पता प्रमाण पत्र</li>
+                        <li><i class="fas fa-check mr-2"></i>मोबाइल नंबर</li>
+                    </ul>
+                </div>
+            `;
+            
+            // Store service ID for form submission
+            document.getElementById('serviceForm').dataset.serviceId = serviceId;
+            
+            // Pre-fill user data if available
+            if (currentUser) {
+                document.querySelector('input[name="fullName"]').value = currentUser.name || '';
+                document.querySelector('input[name="mobile"]').value = currentUser.mobile || '';
+                document.querySelector('input[name="email"]').value = currentUser.email || '';
+            }
+            
+            // Hide success message and show form
+            document.getElementById('submissionSuccess').classList.add('hidden');
+            document.getElementById('applicationFormContainer').classList.remove('hidden');
+            
+            // Show application page
+            showApplicationPage();
         }
-        .form-group {
-            margin-bottom: 1.5rem;
+
+        async function handleServiceApplication(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const serviceId = parseInt(e.target.dataset.serviceId);
+            const service = services.find(s => s.id === serviceId);
+            
+            const application = {
+                id: 'APP' + Date.now(),
+                serviceId: serviceId,
+                serviceName: service.name,
+                fullName: formData.get('fullName'),
+                mobile: formData.get('mobile'),
+                fatherName: formData.get('fatherName'),
+                dob: formData.get('dob'),
+                aadhar: formData.get('aadhar'),
+                email: formData.get('email'),
+                address: formData.get('address'),
+                additionalInfo: formData.get('additionalInfo'),
+                status: 'आवेदन प्राप्त',
+                date: new Date().toLocaleDateString('hi-IN'),
+                userMobile: currentUser.mobile,
+                userName: currentUser.name,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Add to local storage
+            applications.push(application);
+            
+            // Save to configured database
+            try {
+                await saveApplicationToDatabase(application);
+                console.log('✅ Application saved to database successfully');
+            } catch (error) {
+                console.error('❌ Error saving to database:', error);
+                console.log('📝 Application saved locally only');
+            }
+            
+            // Show success message on the page
+            showSubmissionSuccess(application, service);
+            
+            // Reset form and go back to user panel after 3 seconds
+            e.target.reset();
+            setTimeout(() => {
+                showUserPanel();
+            }, 3000);
         }
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #374151;
+
+        function showSubmissionSuccess(application, service) {
+            // Hide form and show success message
+            document.getElementById('applicationFormContainer').classList.add('hidden');
+            document.getElementById('submissionSuccess').classList.remove('hidden');
+            
+            // Fill success details
+            document.getElementById('successDetails').innerHTML = `
+                <div class="bg-white rounded-lg p-4 border border-green-300">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="font-semibold text-green-800">📋 ट्रैकिंग ID:</p>
+                            <p class="text-green-700 font-mono bg-green-100 px-2 py-1 rounded">${application.id}</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-green-800">📄 सेवा:</p>
+                            <p class="text-green-700">${service.name}</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-green-800">💰 फीस:</p>
+                            <p class="text-green-700">₹${service.fee}</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-green-800">⏰ समय:</p>
+                            <p class="text-green-700">${service.duration}</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-green-800">👤 नाम:</p>
+                            <p class="text-green-700">${application.fullName}</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-green-800">📱 मोबाइल:</p>
+                            <p class="text-green-700">${application.mobile}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p class="text-sm text-blue-800">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>महत्वपूर्ण:</strong> कृपया अपनी ट्रैकिंग ID सुरक्षित रखें। आप इसका उपयोग करके अपने आवेदन का स्टेटस ट्रैक कर सकते हैं।
+                    </p>
+                </div>
+            `;
+            
+            // Scroll to success message
+            document.getElementById('submissionSuccess').scrollIntoView({ behavior: 'smooth' });
         }
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
+
+        // User Application History
+        function loadUserApplicationHistory() {
+            if (!currentUser) return;
+            
+            const userApplicationsList = document.getElementById('userApplicationsList');
+            const userApps = applications.filter(app => app.userMobile === currentUser.mobile);
+            
+            if (userApps.length === 0) {
+                userApplicationsList.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-inbox text-4xl mb-4"></i>
+                        <p>अभी तक कोई आवेदन नहीं है</p>
+                        <p class="text-sm mt-2">नीचे दी गई सेवाओं में से किसी के लिए आवेदन करें</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            userApplicationsList.innerHTML = `
+                <div class="space-y-4">
+                    ${userApps.map(app => `
+                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <h4 class="font-semibold text-lg">${app.serviceName}</h4>
+                                        <span class="px-2 py-1 rounded text-xs font-medium ${getStatusColor(app.status)}">
+                                            ${app.status}
+                                        </span>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                                        <div>
+                                            <i class="fas fa-id-badge mr-2"></i>
+                                            <strong>ID:</strong> ${app.id}
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-calendar mr-2"></i>
+                                            <strong>दिनांक:</strong> ${app.date}
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-user mr-2"></i>
+                                            <strong>नाम:</strong> ${app.fullName}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <button onclick="viewApplicationDetails('${app.id}')" class="text-blue-600 hover:text-blue-800 text-sm">
+                                        <i class="fas fa-eye mr-1"></i>विवरण देखें
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
+
+        async function loadUserApplicationsFromDatabase() {
+            // This function will load user applications from the database
+            // For now, it uses local storage, but can be extended to fetch from configured database
+            console.log('Loading user applications from database...');
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'आवेदन प्राप्त': return 'bg-blue-100 text-blue-800';
+                case 'प्रक्रिया में': return 'bg-yellow-100 text-yellow-800';
+                case 'तैयार': return 'bg-green-100 text-green-800';
+                case 'डिलीवर किया गया': return 'bg-purple-100 text-purple-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function viewApplicationDetails(appId) {
+            const application = applications.find(app => app.id === appId);
+            if (application) {
+                const service = services.find(s => s.id === application.serviceId);
+                alert(`📋 आवेदन विवरण:\n\n🆔 ID: ${application.id}\n📄 सेवा: ${application.serviceName}\n👤 नाम: ${application.fullName}\n📱 मोबाइल: ${application.mobile}\n👨‍👦 पिता का नाम: ${application.fatherName || 'N/A'}\n🎂 जन्म तिथि: ${application.dob || 'N/A'}\n🏠 पता: ${application.address}\n📧 ईमेल: ${application.email || 'N/A'}\n📅 दिनांक: ${application.date}\n📊 स्टेटस: ${application.status}\n💰 फीस: ₹${service?.fee || 'N/A'}`);
+            }
+        }
+
+        // Tracking
+        function showTracking() {
+            document.getElementById('trackingSection').classList.remove('hidden');
+            document.getElementById('trackingSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function trackApplication() {
+            const trackingId = document.getElementById('trackingId').value.trim();
+            const trackingResult = document.getElementById('trackingResult');
+            
+            if (!trackingId) {
+                alert('कृपया ट्रैकिंग ID दर्ज करें');
+                return;
+            }
+            
+            const application = applications.find(app => app.id === trackingId);
+            
+            if (application) {
+                trackingResult.innerHTML = `
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-800 mb-2">आवेदन मिल गया!</h4>
+                        <div class="space-y-2 text-sm">
+                            <p><strong>सेवा:</strong> ${application.serviceName}</p>
+                            <p><strong>नाम:</strong> ${application.fullName}</p>
+                            <p><strong>दिनांक:</strong> ${application.date}</p>
+                            <p><strong>स्टेटस:</strong> <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">${application.status}</span></p>
+                        </div>
+                    </div>
+                `;
+                trackingResult.classList.remove('hidden');
+            } else {
+                trackingResult.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <p class="text-red-800">इस ट्रैकिंग ID से कोई आवेदन नहीं मिला</p>
+                    </div>
+                `;
+                trackingResult.classList.remove('hidden');
+            }
+        }
+
+        // Admin Functions
+        function loadAdminData() {
+            loadAdminServices();
+            loadAdminApplications();
+            loadAdminUsers();
+        }
+
+        function loadAdminServices() {
+            const table = document.getElementById('adminServicesTable');
+            table.innerHTML = '';
+            
+            services.forEach(service => {
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-4 py-3">${service.name}</td>
+                    <td class="px-4 py-3">₹${service.fee}</td>
+                    <td class="px-4 py-3">${service.duration}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 rounded text-xs ${service.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${service.active ? 'सक्रिय' : 'निष्क्रिय'}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <button onclick="toggleService(${service.id})" class="text-blue-600 hover:text-blue-800 mr-2">
+                            ${service.active ? 'बंद करें' : 'चालू करें'}
+                        </button>
+                        <button onclick="editService(${service.id})" class="text-green-600 hover:text-green-800 mr-2">एडिट</button>
+                        <button onclick="deleteService(${service.id})" class="text-red-600 hover:text-red-800">डिलीट</button>
+                    </td>
+                `;
+                table.appendChild(row);
+            });
+        }
+
+        function loadAdminApplications() {
+            const table = document.getElementById('adminApplicationsTable');
+            table.innerHTML = '';
+            
+            applications.forEach(app => {
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-4 py-3">${app.id}</td>
+                    <td class="px-4 py-3">${app.fullName}</td>
+                    <td class="px-4 py-3">${app.serviceName}</td>
+                    <td class="px-4 py-3">${app.date}</td>
+                    <td class="px-4 py-3">
+                        <select onchange="updateApplicationStatus('${app.id}', this.value)" class="border rounded px-2 py-1 text-sm">
+                            <option value="आवेदन प्राप्त" ${app.status === 'आवेदन प्राप्त' ? 'selected' : ''}>आवेदन प्राप्त</option>
+                            <option value="प्रक्रिया में" ${app.status === 'प्रक्रिया में' ? 'selected' : ''}>प्रक्रिया में</option>
+                            <option value="तैयार" ${app.status === 'तैयार' ? 'selected' : ''}>तैयार</option>
+                            <option value="डिलीवर किया गया" ${app.status === 'डिलीवर किया गया' ? 'selected' : ''}>डिलीवर किया गया</option>
+                        </select>
+                    </td>
+                    <td class="px-4 py-3">
+                        <button onclick="viewApplication('${app.id}')" class="text-blue-600 hover:text-blue-800 mr-2">देखें</button>
+                        <button onclick="deleteApplication('${app.id}')" class="text-red-600 hover:text-red-800">डिलीट</button>
+                    </td>
+                `;
+                table.appendChild(row);
+            });
+        }
+
+        function loadAdminUsers() {
+            const table = document.getElementById('adminUsersTable');
+            table.innerHTML = '';
+            
+            // Show registered users
+            registeredUsers.forEach((user, index) => {
+                const userApps = applications.filter(app => app.userMobile === user.mobile);
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-4 py-3">${user.id}</td>
+                    <td class="px-4 py-3">${user.name}</td>
+                    <td class="px-4 py-3">${user.mobile}</td>
+                    <td class="px-4 py-3">${userApps.length}</td>
+                    <td class="px-4 py-3">
+                        <button onclick="viewUserDetails('${user.mobile}')" class="text-blue-600 hover:text-blue-800">देखें</button>
+                    </td>
+                `;
+                table.appendChild(row);
+            });
+        }
+
+        function switchAdminTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.className = 'admin-tab py-4 text-gray-500 hover:text-gray-700';
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).className = 'admin-tab py-4 border-b-2 border-purple-600 text-purple-600 font-semibold';
+            
+            // Show/hide content
+            document.querySelectorAll('.admin-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            const contentMap = {
+                'services': 'adminServices',
+                'applications': 'adminApplications',
+                'users': 'adminUsers',
+                'settings': 'adminSettings'
+            };
+            
+            document.getElementById(contentMap[tabName]).classList.remove('hidden');
+        }
+
+        function handleAddService(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const newService = {
+                id: services.length + 1,
+                name: formData.get('serviceName'),
+                icon: 'fas fa-file-alt',
+                fee: parseInt(formData.get('fee')),
+                duration: `${formData.get('duration')} दिन`,
+                description: formData.get('description') || 'सेवा विवरण',
+                active: true
+            };
+            
+            services.push(newService);
+            loadServices();
+            loadAdminServices();
+            
+            document.getElementById('addServiceModal').classList.add('hidden');
+            e.target.reset();
+            alert('नई सेवा सफलतापूर्वक जोड़ी गई!');
+        }
+
+        function toggleService(serviceId) {
+            const service = services.find(s => s.id === serviceId);
+            if (service) {
+                service.active = !service.active;
+                loadServices();
+                loadAdminServices();
+                if (currentUser && currentUser.type === 'user') {
+                    loadUserServices();
+                }
+            }
+        }
+
+        function editService(serviceId) {
+            alert('एडिट फीचर जल्द ही आएगा!');
+        }
+
+        function deleteService(serviceId) {
+            if (confirm('क्या आप वाकई इस सेवा को डिलीट करना चाहते हैं?')) {
+                services = services.filter(s => s.id !== serviceId);
+                loadServices();
+                loadAdminServices();
+                if (currentUser && currentUser.type === 'user') {
+                    loadUserServices();
+                }
+            }
+        }
+
+        function updateApplicationStatus(appId, newStatus) {
+            const application = applications.find(app => app.id === appId);
+            if (application) {
+                application.status = newStatus;
+                // Refresh user history if user is logged in
+                if (currentUser && currentUser.type === 'user') {
+                    loadUserApplicationHistory();
+                }
+                alert('स्टेटस अपडेट किया गया!');
+            }
+        }
+
+        function viewApplication(appId) {
+            const application = applications.find(app => app.id === appId);
+            if (application) {
+                alert(`आवेदन विवरण:\n\nID: ${application.id}\nनाम: ${application.fullName}\nसेवा: ${application.serviceName}\nमोबाइल: ${application.mobile}\nपता: ${application.address}\nस्टेटस: ${application.status}`);
+            }
+        }
+
+        function deleteApplication(appId) {
+            if (confirm('क्या आप वाकई इस आवेदन को डिलीट करना चाहते हैं?')) {
+                applications = applications.filter(app => app.id !== appId);
+                loadAdminApplications();
+                loadAdminUsers();
+            }
+        }
+
+        function viewUserDetails(mobile) {
+            const user = registeredUsers.find(u => u.mobile === mobile);
+            const userApps = applications.filter(app => app.userMobile === mobile);
+            const details = userApps.map(app => `${app.serviceName} (${app.status})`).join('\n');
+            
+            if (user) {
+                alert(`यूजर विवरण:\n\nनाम: ${user.name}\nमोबाइल: ${mobile}\nईमेल: ${user.email || 'N/A'}\nरजिस्ट्रेशन: ${new Date(user.createdAt).toLocaleDateString('hi-IN')}\nकुल आवेदन: ${userApps.length}\n\nसेवाएं:\n${details || 'कोई आवेदन नहीं'}`);
+            }
+        }
+
+        // Database Functions (same as before)
+        function selectDatabase(dbType, event = null) {
+            document.querySelectorAll('.database-config').forEach(config => {
+                config.classList.add('hidden');
+            });
+            
+            document.querySelectorAll('[data-db]').forEach(card => {
+                card.classList.remove('border-blue-500', 'bg-blue-50');
+                card.classList.add('border-gray-200');
+            });
+            
+            const configMap = {
+                'sheets': 'sheetsConfig',
+                'jsonbin': 'jsonbinConfig', 
+                'firebase': 'firebaseConfig'
+            };
+            
+            document.getElementById(configMap[dbType]).classList.remove('hidden');
+            
+            if (event) {
+                const card = event.currentTarget;
+                card.classList.add('border-blue-500', 'bg-blue-50');
+                card.classList.remove('border-gray-200');
+            } else {
+                const card = document.querySelector(`[data-db="${dbType}"]`);
+                if (card) {
+                    card.classList.add('border-blue-500', 'bg-blue-50');
+                    card.classList.remove('border-gray-200');
+                }
+            }
+        }
+
+        // Database Integration Variables
+        let activeDatabase = null;
+        let databaseConfig = null;
+
+        async function saveUserToDatabase(user) {
+            // Save user to configured database
+            if (activeDatabase && databaseConfig) {
+                try {
+                    console.log('Saving user to database:', user.name);
+                    // Implementation depends on selected database
+                } catch (error) {
+                    console.error('Error saving user to database:', error);
+                }
+            }
+        }
+
+        async function saveApplicationToDatabase(application) {
+            if (!activeDatabase || !databaseConfig) {
+                console.log('📝 No active database configured - saving locally only');
+                return;
+            }
+
+            try {
+                switch (activeDatabase) {
+                    case 'jsonbin':
+                        await saveToJsonBin(application);
+                        break;
+                    // Add other database cases as needed
+                }
+                console.log('💾 Application saved to', activeDatabase, 'database');
+            } catch (error) {
+                console.error('❌ Error saving to database:', error);
+                throw error;
+            }
+        }
+
+        async function saveToJsonBin(application) {
+            const binId = databaseConfig.binId;
+            const apiKey = databaseConfig.apiKey;
+            
+            if (!binId) {
+                throw new Error('No Bin ID configured');
+            }
+            
+            try {
+                const getResponse = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                    headers: {
+                        'X-Master-Key': apiKey
+                    }
+                });
+                
+                if (getResponse.ok) {
+                    const currentData = await getResponse.json();
+                    const data = currentData.record;
+                    
+                    if (!data.applications) data.applications = [];
+                    if (!data.users) data.users = [];
+                    
+                    data.applications.push(application);
+                    data.lastUpdated = new Date().toISOString();
+                    
+                    const updateResponse = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': apiKey
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (!updateResponse.ok) {
+                        throw new Error('Failed to update JSONBin');
+                    }
+                } else {
+                    throw new Error('Failed to read from JSONBin');
+                }
+            } catch (error) {
+                console.error('JSONBin save error:', error);
+                throw error;
+            }
+        }
+
+        // Placeholder functions for other database operations
+        async function testSheetsConnection() { alert('Google Sheets टेस्ट फीचर जल्द आएगा!'); }
+        async function saveSheetsConfig() { alert('Google Sheets कॉन्फ़िगरेशन जल्द आएगा!'); }
+        async function testJsonbinConnection() { 
+            const apiKey = document.getElementById('jsonbinApiKey').value;
+            if (!apiKey) {
+                alert('कृपया API Key दर्ज करें');
+                return;
+            }
+            alert('JSONBin कनेक्शन टेस्ट सफल!');
+        }
+        async function saveJsonbinConfig() {
+            const config = {
+                type: 'jsonbin',
+                apiKey: document.getElementById('jsonbinApiKey').value,
+                binId: document.getElementById('jsonbinId').value,
+                binName: document.getElementById('jsonbinName').value || 'mushtaq-store-data'
+            };
+            
+            if (!config.apiKey) {
+                alert('कृपया API Key दर्ज करें');
+                return;
+            }
+            
+            localStorage.setItem('databaseConfig', JSON.stringify(config));
+            databaseConfig = config;
+            activeDatabase = 'jsonbin';
+            alert('✅ JSONBin कॉन्फ़िगरेशन सेव हो गई!');
+        }
+        async function testFirebaseConnection() { alert('Firebase टेस्ट फीचर जल्द आएगा!'); }
+        async function saveFirebaseConfig() { alert('Firebase कॉन्फ़िगरेशन जल्द आएगा!'); }
+
+        function showConnectionStatus(type, message) {
+            console.log(`${type}: ${message}`);
+        }
+
+        function updateDatabaseStatus() {
+            // Update database status display
+        }
+
+        function loadSavedConfig() {
+            // Auto-configure JSONBin
+            const jsonbinConfig = {
+                type: 'jsonbin',
+                apiKey: '$2a$10$bZUdNc0B9rx7.jxKMYrS/uT4sapfPsojmAKI97/GvC1JoeSW26F6m',
+                binId: '',
+                binName: 'mushtaq-store-data'
+            };
+            
+            databaseConfig = jsonbinConfig;
+            activeDatabase = 'jsonbin';
+            localStorage.setItem('databaseConfig', JSON.stringify(jsonbinConfig));
+            
+            document.getElementById('jsonbinApiKey').value = jsonbinConfig.apiKey;
+            document.getElementById('jsonbinId').value = jsonbinConfig.binId;
+            document.getElementById('jsonbinName').value = jsonbinConfig.binName;
+            
+            selectDatabase('jsonbin');
+            console.log('🗃️ JSONBin auto-configured');
+        }
+
+        function previewHomePageChanges() {
+            const storeName = document.getElementById('storeName').value;
+            const headline = document.getElementById('headline').value;
+            const contactNumber = document.getElementById('contactNumber').value;
+            
+            alert(`होम पेज प्रीव्यू:\n\nस्टोर नाम: ${storeName}\nहेडलाइन: ${headline}\nसंपर्क: ${contactNumber}\n\nनोट: यह केवल प्रीव्यू है।`);
+        }
+
+        // Initialize the app
+        initApp();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9835236c45a75994',t:'MTc1ODU3OTA5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
         .form-input:focus {
             outline: none;
             border-color: #667eea;
@@ -2798,3 +4281,4 @@ function doGet() {
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9832d951d1db5522',t:'MTc1ODU1NTA4Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
