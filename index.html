@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mushtaq Store - सरकारी सेवा केंद्र</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Noto Sans Devanagari', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1); }
+        .service-icon { font-size: 2rem; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .bottom-nav { box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { color: #2563eb; }
+        .nav-item.active svg { fill: #2563eb; }
+        .mobile-container { padding-bottom: 20px; }
+        .side-menu-open { transform: translateX(0) !important; }
+    </style>
+</head>
+<body class="bg-gray-50 mobile-container">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg sticky top-0 z-40">
+        <div class="px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleSideMenu()" class="text-white p-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <div class="bg-white text-blue-600 p-2 rounded-full">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2L3 7v11a1 1 0 001 1h3v-7h6v7h3a1 1 0 001-1V7l-7-5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold">Mushtaq Store</h1>
+                        <p class="text-blue-100 text-xs">सरकारी सेवा केंद्र</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="bg-green-500 px-2 py-1 rounded-full text-xs">✓ प्रमाणित</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Side Menu -->
+    <div id="sideMenu" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="fixed left-0 top-0 h-full w-80 bg-white shadow-lg transform -translate-x-full transition-transform duration-300" id="sideMenuContent">
+            <div class="p-4 gradient-bg text-white">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-white text-blue-600 p-2 rounded-full">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2L3 7v11a1 1 0 001 1h3v-7h6v7h3a1 1 0 001-1V7l-7-5z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="font-bold">Mushtaq Store</h2>
+                            <p class="text-blue-100 text-xs">सरकारी सेवा केंद्र</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleSideMenu()" class="text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <nav class="space-y-2">
+                    <button onclick="switchTab('home'); toggleSideMenu();" class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                        <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                        </svg>
+                        <span class="font-medium">होम</span>
+                    </button>
+                    
+                    <button onclick="switchTab('services'); toggleSideMenu();" class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                        <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-medium">सभी सेवाएं</span>
+                    </button>
+                    
+                    <button onclick="switchTab('track'); toggleSideMenu();" class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                        <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-medium">आवेदन ट्रैकिंग</span>
+                    </button>
+                    
+                    <button onclick="switchTab('profile'); toggleSideMenu();" class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                        <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-medium">प्रोफाइल</span>
+                    </button>
+                </nav>
+                
+                <hr class="my-4">
+                
+                <div class="space-y-2">
+                    <button onclick="openAuthModal('customer-login'); toggleSideMenu();" class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                        <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-medium">ग्राहक लॉगिन</span>
+                    </button>
+                    
+                    <button onclick="openAuthModal('customer-signup'); toggleSideMenu();" class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                        <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                        </svg>
+                        <span class="font-medium">ग्राहक साइनअप</span>
+                    </button>
+                    
+                    <button onclick="openAuthModal('admin-login'); toggleSideMenu();" class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                        <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-medium">एडमिन लॉगिन</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="hidden">
+        <div class="px-4 py-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">एडमिन डैशबोर्ड</h2>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    <span>लॉगआउट</span>
+                </button>
+            </div>
+            
+            <!-- Admin Menu -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <button onclick="showAdminSection('editHome')" class="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg text-center">
+                    <div class="text-2xl mb-2">🏠</div>
+                    <div class="font-medium">होम पेज एडिट</div>
+                </button>
+                <button onclick="showAdminSection('manageServices')" class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-lg text-center">
+                    <div class="text-2xl mb-2">⚙️</div>
+                    <div class="font-medium">सेवा प्रबंधन</div>
+                </button>
+                <button onclick="showAdminSection('googleSheets')" class="bg-indigo-500 hover:bg-indigo-600 text-white p-4 rounded-lg text-center">
+                    <div class="text-2xl mb-2">📊</div>
+                    <div class="font-medium">Google Sheets</div>
+                </button>
+                <button onclick="showAdminSection('addOffers')" class="bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-lg text-center">
+                    <div class="text-2xl mb-2">🎁</div>
+                    <div class="font-medium">ऑफर जोड़ें</div>
+                </button>
+                <button onclick="showAdminSection('addBanner')" class="bg-orange-500 hover:bg-orange-600 text-white p-4 rounded-lg text-center">
+                    <div class="text-2xl mb-2">📢</div>
+                    <div class="font-medium">बैनर जोड़ें</div>
+                </button>
+            </div>
+            
+            <!-- Admin Sections -->
+            <div id="adminSections">
+                <!-- Edit Home Section -->
+                <div id="editHomeSection" class="admin-section hidden">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold mb-4">होम पेज एडिट करें</h3>
+                        <form onsubmit="updateHomePage(event)">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">स्टोर का नाम</label>
+                                    <input type="text" id="storeName" value="Mushtaq Store" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">टैगलाइन</label>
+                                    <input type="text" id="tagline" value="सरकारी सेवा केंद्र" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">फोन नंबर</label>
+                                    <input type="tel" id="phoneNumber" value="+91 98765 43210" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">पता</label>
+                                    <textarea id="address" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg">मुख्य बाजार, शहर</textarea>
+                                </div>
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+                                    अपडेट करें
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Manage Services Section -->
+                <div id="manageServicesSection" class="admin-section hidden">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">सेवा प्रबंधन</h3>
+                            <button onclick="showAddServiceForm()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                                नई सेवा जोड़ें
+                            </button>
+                        </div>
+                        <div id="servicesList" class="space-y-3">
+                            <!-- Services list will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add Offers Section -->
+                <div id="addOffersSection" class="admin-section hidden">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold mb-4">ऑफर जोड़ें</h3>
+                        <form onsubmit="addOffer(event)">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">ऑफर का नाम</label>
+                                    <input type="text" name="offerTitle" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">ऑफर विवरण</label>
+                                    <textarea name="offerDescription" rows="3" required class="w-full px-3 py-2 border border-gray-300 rounded-lg"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">डिस्काउंट (%)</label>
+                                    <input type="number" name="discount" min="1" max="100" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">समाप्ति तिथि</label>
+                                    <input type="date" name="expiryDate" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg">
+                                    ऑफर जोड़ें
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Google Sheets Setup Section -->
+                <div id="googleSheetsSection" class="admin-section hidden">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold mb-4">📊 Google Sheets सेटअप</h3>
+                        
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <h4 class="font-semibold text-blue-800 mb-2">🔧 सेटअप गाइड</h4>
+                            <div class="text-sm text-blue-700 space-y-2">
+                                <p><strong>स्टेप 1:</strong> Google Drive में जाकर नई Google Sheet बनाएं</p>
+                                <p><strong>स्टेप 2:</strong> Sheet में ये columns बनाएं: Timestamp, Tracking ID, Service Type, Full Name, Mobile, Email, Address, Status</p>
+                                <p><strong>स्टेप 3:</strong> Google Apps Script बनाएं (script.google.com)</p>
+                                <p><strong>स्टेप 4:</strong> नीचे दिया गया code Apps Script में paste करें</p>
+                                <p><strong>स्टेप 5:</strong> Script को deploy करें और URL यहाँ paste करें</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Google Apps Script URL</label>
+                                <input type="url" id="googleScriptUrl" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                <p class="text-xs text-gray-500 mt-1">Apps Script deploy करने के बाद मिलने वाला URL यहाँ डालें</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Google Sheet ID</label>
+                                <input type="text" id="googleSheetId" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                <p class="text-xs text-gray-500 mt-1">Google Sheet के URL से Sheet ID copy करें</p>
+                            </div>
+                            
+                            <button onclick="saveGoogleSheetsConfig()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg">
+                                कॉन्फ़िगरेशन सेव करें
+                            </button>
+                            
+                            <button onclick="testGoogleSheetsConnection()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg ml-2">
+                                कनेक्शन टेस्ट करें
+                            </button>
+                        </div>
+                        
+                        <div class="mt-6 bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-2">📝 Google Apps Script Code:</h4>
+                            <textarea readonly class="w-full h-40 text-xs font-mono bg-white border rounded p-2" onclick="this.select()">
+function doPost(e) {
+  try {
+    // Get the active spreadsheet (make sure to replace with your sheet ID)
+    const sheet = SpreadsheetApp.openById('YOUR_SHEET_ID').getActiveSheet();
+    
+    // Parse the incoming data
+    const data = JSON.parse(e.postData.contents);
+    
+    // Prepare row data
+    const rowData = [
+      data.timestamp || new Date().toISOString(),
+      data.trackingId || '',
+      data.serviceType || '',
+      data.fullName || '',
+      data.mobile || '',
+      data.email || '',
+      data.address || '',
+      data.status || '',
+      data.submissionDate || '',
+      data.submissionTime || '',
+      // Add more fields as needed
+      data.fatherName || '',
+      data.dob || '',
+      data.aadhaarNumber || '',
+      data.occupation || '',
+      data.bankAccount || '',
+      data.ifsc || '',
+      data.rationCard || '',
+      data.familyMembers || '',
+      data.gender || '',
+      data.constituency || ''
+    ];
+    
+    // Add the row to the sheet
+    sheet.appendRow(rowData);
+    
+    // Return success response
+    return ContentService
+      .createTextOutput(JSON.stringify({success: true, message: 'Data saved successfully'}))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    // Return error response
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, error: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  return ContentService
+    .createTextOutput(JSON.stringify({message: 'Apps Script is working!'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+                            </textarea>
+                            <p class="text-xs text-gray-600 mt-2">👆 इस code को copy करके Google Apps Script में paste करें</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add Banner Section -->
+                <div id="addBannerSection" class="admin-section hidden">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold mb-4">बैनर जोड़ें</h3>
+                        <form onsubmit="addBanner(event)">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">बैनर टेक्स्ट</label>
+                                    <input type="text" name="bannerText" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                
+                                <!-- Image Upload Options -->
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                                    <h4 class="font-medium text-gray-700 mb-3">बैनर इमेज (वैकल्पिक)</h4>
+                                    
+                                    <!-- File Upload Option -->
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">📁 फाइल अपलोड करें</label>
+                                        <input type="file" id="bannerFileInput" accept="image/*" onchange="handleFileUpload(event)" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                        <p class="text-xs text-gray-500 mt-1">JPG, PNG, GIF फाइलें अपलोड करें (अधिकतम 5MB)</p>
+                                    </div>
+                                    
+                                    <div class="text-center text-gray-500 text-sm mb-4">या</div>
+                                    
+                                    <!-- URL Input Option -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">🔗 इमेज URL डालें</label>
+                                        <input type="url" name="bannerImageUrl" placeholder="https://example.com/image.jpg" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                        <p class="text-xs text-gray-500 mt-1">इंटरनेट से इमेज का लिंक डालें</p>
+                                    </div>
+                                    
+                                    <!-- Image Preview -->
+                                    <div id="imagePreview" class="mt-4 hidden">
+                                        <p class="text-sm font-medium text-gray-700 mb-2">इमेज प्रीव्यू:</p>
+                                        <div class="relative inline-block">
+                                            <img id="previewImg" src="" alt="Preview" class="max-w-32 max-h-32 rounded-lg border">
+                                            <button type="button" onclick="removeImagePreview()" 
+                                                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs hover:bg-red-600">
+                                                ×
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">बैनर रंग</label>
+                                    <select name="bannerColor" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                        <option value="blue">नीला</option>
+                                        <option value="green">हरा</option>
+                                        <option value="red">लाल</option>
+                                        <option value="purple">बैंगनी</option>
+                                        <option value="orange">नारंगी</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">बैनर प्रकार</label>
+                                    <select name="bannerType" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                        <option value="announcement">घोषणा</option>
+                                        <option value="offer">ऑफर</option>
+                                        <option value="news">समाचार</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg">
+                                    बैनर जोड़ें
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="px-4 py-4">
+        <!-- Hero Section -->
+        <div id="heroSection" class="mb-6">
+            <!-- Dynamic banners will be added here -->
+        </div>
+        
+        <!-- Offers Section -->
+        <div id="offersSection" class="mb-6 hidden">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">विशेष ऑफर</h2>
+            <div id="offersList" class="space-y-3">
+                <!-- Offers will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Home Tab -->
+        <div id="homeTab" class="tab-content active">
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-xl">
+                    <div class="text-2xl font-bold">150+</div>
+                    <div class="text-sm opacity-90">सफल आवेदन</div>
+                </div>
+                <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-xl">
+                    <div class="text-2xl font-bold">24/7</div>
+                    <div class="text-sm opacity-90">सेवा उपलब्ध</div>
+                </div>
+            </div>
+
+            <!-- Featured Services -->
+            <div class="mb-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">लोकप्रिय सेवाएं</h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white rounded-lg shadow-md p-4 card-hover cursor-pointer" onclick="openServiceForm('pan')">
+                        <div class="text-center">
+                            <div class="service-icon mb-2">🏛️</div>
+                            <h3 class="text-sm font-semibold text-gray-800">PAN Card</h3>
+                            <p class="text-xs text-gray-600 mt-1">₹107 + शुल्क</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-4 card-hover cursor-pointer" onclick="openServiceForm('aadhaar')">
+                        <div class="text-center">
+                            <div class="service-icon mb-2">🆔</div>
+                            <h3 class="text-sm font-semibold text-gray-800">Aadhaar Card</h3>
+                            <p class="text-xs text-gray-600 mt-1">₹30 + शुल्क</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Updates -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <h3 class="font-semibold text-gray-800 mb-3">नवीनतम अपडेट</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                        <div>
+                            <p class="text-sm text-gray-800">PAN कार्ड की नई प्रक्रिया शुरू</p>
+                            <p class="text-xs text-gray-500">2 दिन पहले</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                        <div>
+                            <p class="text-sm text-gray-800">Ayushman कार्ड तुरंत मिलेगा</p>
+                            <p class="text-xs text-gray-500">5 दिन पहले</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Tab -->
+        <div id="servicesTab" class="tab-content">
+            <div class="mb-4">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">सभी सेवाएं</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-4">
+                <!-- PAN Card -->
+                <div class="bg-white rounded-lg shadow-md p-4 card-hover cursor-pointer" onclick="openServiceForm('pan')">
+                    <div class="flex items-center space-x-4">
+                        <div class="service-icon">🏛️</div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">PAN Card</h3>
+                            <p class="text-sm text-gray-600">नया PAN कार्ड बनवाएं या सुधार कराएं</p>
+                            <div class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs mt-2 inline-block">
+                                ₹107 + सेवा शुल्क
+                            </div>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Aadhaar Card -->
+                <div class="bg-white rounded-lg shadow-md p-4 card-hover cursor-pointer" onclick="openServiceForm('aadhaar')">
+                    <div class="flex items-center space-x-4">
+                        <div class="service-icon">🆔</div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">Aadhaar Card</h3>
+                            <p class="text-sm text-gray-600">आधार कार्ड अपडेट और सुधार</p>
+                            <div class="bg-green-50 text-green-700 px-2 py-1 rounded text-xs mt-2 inline-block">
+                                ₹30 + सेवा शुल्क
+                            </div>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Voter ID -->
+                <div class="bg-white rounded-lg shadow-md p-4 card-hover cursor-pointer" onclick="openServiceForm('voter')">
+                    <div class="flex items-center space-x-4">
+                        <div class="service-icon">🗳️</div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">Voter ID Card</h3>
+                            <p class="text-sm text-gray-600">मतदाता पहचान पत्र के लिए आवेदन</p>
+                            <div class="bg-purple-50 text-purple-700 px-2 py-1 rounded text-xs mt-2 inline-block">
+                                निःशुल्क + सेवा शुल्क
+                            </div>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- E-Shram Card -->
+                <div class="bg-white rounded-lg shadow-md p-4 card-hover cursor-pointer" onclick="openServiceForm('eshram')">
+                    <div class="flex items-center space-x-4">
+                        <div class="service-icon">👷</div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">E-Shram Card</h3>
+                            <p class="text-sm text-gray-600">श्रमिक पंजीकरण कार्ड</p>
+                            <div class="bg-orange-50 text-orange-700 px-2 py-1 rounded text-xs mt-2 inline-block">
+                                निःशुल्क + सेवा शुल्क
+                            </div>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Ayushman Card -->
+                <div class="bg-white rounded-lg shadow-md p-4 card-hover cursor-pointer" onclick="openServiceForm('ayushman')">
+                    <div class="flex items-center space-x-4">
+                        <div class="service-icon">🏥</div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">Ayushman Card</h3>
+                            <p class="text-sm text-gray-600">आयुष्मान भारत गोल्डन कार्ड</p>
+                            <div class="bg-red-50 text-red-700 px-2 py-1 rounded text-xs mt-2 inline-block">
+                                निःशुल्क + सेवा शुल्क
+                            </div>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- ABHA Card -->
+                <div class="bg-white rounded-lg shadow-md p-4 card-hover cursor-pointer" onclick="openServiceForm('abha')">
+                    <div class="flex items-center space-x-4">
+                        <div class="service-icon">🩺</div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">ABHA Card</h3>
+                            <p class="text-sm text-gray-600">आयुष्मान भारत हेल्थ अकाउंट</p>
+                            <div class="bg-teal-50 text-teal-700 px-2 py-1 rounded text-xs mt-2 inline-block">
+                                निःशुल्क + सेवा शुल्क
+                            </div>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Track Tab -->
+        <div id="trackTab" class="tab-content">
+            <div class="mb-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">आवेदन ट्रैकिंग</h2>
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <div class="space-y-4">
+                        <input type="text" id="trackingId" placeholder="ट्रैकिंग ID या रेफरेंस नंबर डालें" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <button onclick="trackApplication()" 
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors">
+                            ट्रैक करें
+                        </button>
+                    </div>
+                    <div id="trackingResult" class="mt-6 hidden">
+                        <!-- Tracking results will appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Applications -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <h3 class="font-semibold text-gray-800 mb-4">हाल के आवेदन</h3>
+                <div id="recentApplications" class="space-y-3">
+                    <div class="text-center text-gray-500 py-8">
+                        <div class="text-4xl mb-2">📋</div>
+                        <p>कोई हाल का आवेदन नहीं मिला</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profileTab" class="tab-content">
+            <div class="space-y-6">
+                <!-- Store Info -->
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4">स्टोर जानकारी</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="text-2xl">🏪</div>
+                            <div>
+                                <p class="font-medium">Mushtaq Store</p>
+                                <p class="text-sm text-gray-600">सरकारी सेवा केंद्र</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="text-2xl">📞</div>
+                            <div>
+                                <p class="font-medium">+91 98765 43210</p>
+                                <p class="text-sm text-gray-600">संपर्क नंबर</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="text-2xl">📍</div>
+                            <div>
+                                <p class="font-medium">मुख्य बाजार, शहर</p>
+                                <p class="text-sm text-gray-600">पता</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="text-2xl">🕒</div>
+                            <div>
+                                <p class="font-medium">सुबह 9:00 - शाम 7:00</p>
+                                <p class="text-sm text-gray-600">खुलने का समय</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4">त्वरित कार्य</h3>
+                    <div class="space-y-3">
+                        <button onclick="showApplicationReport()" class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-xl">📊</span>
+                                <span>आवेदन रिपोर्ट</span>
+                            </div>
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                        <button onclick="showSettings()" class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-xl">⚙️</span>
+                                <span>सेटिंग्स</span>
+                            </div>
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certification -->
+                <div class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg p-4 text-center">
+                    <div class="text-3xl mb-2">✅</div>
+                    <h3 class="font-semibold mb-1">प्रमाणित केंद्र</h3>
+                    <p class="text-sm opacity-90">सरकार द्वारा अधिकृत सेवा प्रदाता</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+    <!-- Authentication Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 id="authModalTitle" class="text-xl font-bold text-gray-800"></h3>
+                        <button onclick="closeAuthModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    
+                    <form id="authForm" onsubmit="submitAuthForm(event)">
+                        <div id="authFormFields" class="space-y-4">
+                            <!-- Dynamic auth form fields will be inserted here -->
+                        </div>
+                        
+                        <div class="mt-6">
+                            <button type="submit" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition-colors">
+                                लॉगिन करें
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Form Modal -->
+    <div id="serviceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 id="modalTitle" class="text-2xl font-bold text-gray-800"></h3>
+                        <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    
+                    <form id="serviceForm" onsubmit="submitForm(event)">
+                        <div id="formFields" class="space-y-4">
+                            <!-- Dynamic form fields will be inserted here -->
+                        </div>
+                        
+                        <div class="mt-8 flex space-x-4">
+                            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition-colors">
+                                आवेदन जमा करें
+                            </button>
+                            <button type="button" onclick="closeModal()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                रद्द करें
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const serviceData = {
+            pan: {
+                title: 'PAN Card आवेदन',
+                fields: [
+                    { name: 'fullName', label: 'पूरा नाम', type: 'text', required: true },
+                    { name: 'fatherName', label: 'पिता का नाम', type: 'text', required: true },
+                    { name: 'dob', label: 'जन्म तिथि', type: 'date', required: true },
+                    { name: 'mobile', label: 'मोबाइल नंबर', type: 'tel', required: true },
+                    { name: 'email', label: 'ईमेल', type: 'email', required: true },
+                    { name: 'address', label: 'पता', type: 'textarea', required: true },
+                    { name: 'serviceType', label: 'सेवा प्रकार', type: 'select', options: ['नया PAN', 'PAN सुधार', 'डुप्लिकेट PAN'], required: true }
+                ]
+            },
+            aadhaar: {
+                title: 'Aadhaar Card सेवा',
+                fields: [
+                    { name: 'fullName', label: 'पूरा नाम', type: 'text', required: true },
+                    { name: 'aadhaarNumber', label: 'आधार नंबर (यदि है)', type: 'text' },
+                    { name: 'mobile', label: 'मोबाइल नंबर', type: 'tel', required: true },
+                    { name: 'address', label: 'पता', type: 'textarea', required: true },
+                    { name: 'serviceType', label: 'सेवा प्रकार', type: 'select', options: ['नाम अपडेट', 'पता अपडेट', 'मोबाइल अपडेट', 'जन्म तिथि सुधार'], required: true }
+                ]
+            },
+            voter: {
+                title: 'Voter ID Card आवेदन',
+                fields: [
+                    { name: 'fullName', label: 'पूरा नाम', type: 'text', required: true },
+                    { name: 'fatherName', label: 'पिता/पति का नाम', type: 'text', required: true },
+                    { name: 'dob', label: 'जन्म तिथि', type: 'date', required: true },
+                    { name: 'mobile', label: 'मोबाइल नंबर', type: 'tel', required: true },
+                    { name: 'address', label: 'पता', type: 'textarea', required: true },
+                    { name: 'constituency', label: 'विधानसभा क्षेत्र', type: 'text', required: true }
+                ]
+            },
+            eshram: {
+                title: 'E-Shram Card पंजीकरण',
+                fields: [
+                    { name: 'fullName', label: 'पूरा नाम', type: 'text', required: true },
+                    { name: 'aadhaarNumber', label: 'आधार नंबर', type: 'text', required: true },
+                    { name: 'mobile', label: 'मोबाइल नंबर', type: 'tel', required: true },
+                    { name: 'occupation', label: 'व्यवसाय', type: 'text', required: true },
+                    { name: 'bankAccount', label: 'बैंक खाता नंबर', type: 'text', required: true },
+                    { name: 'ifsc', label: 'IFSC कोड', type: 'text', required: true }
+                ]
+            },
+            ayushman: {
+                title: 'Ayushman Bharat Card',
+                fields: [
+                    { name: 'fullName', label: 'पूरा नाम', type: 'text', required: true },
+                    { name: 'aadhaarNumber', label: 'आधार नंबर', type: 'text', required: true },
+                    { name: 'mobile', label: 'मोबाइल नंबर', type: 'tel', required: true },
+                    { name: 'rationCard', label: 'राशन कार्ड नंबर', type: 'text' },
+                    { name: 'familyMembers', label: 'परिवार के सदस्य संख्या', type: 'number', required: true },
+                    { name: 'address', label: 'पता', type: 'textarea', required: true }
+                ]
+            },
+            abha: {
+                title: 'ABHA Card आवेदन',
+                fields: [
+                    { name: 'fullName', label: 'पूरा नाम', type: 'text', required: true },
+                    { name: 'aadhaarNumber', label: 'आधार नंबर', type: 'text', required: true },
+                    { name: 'mobile', label: 'मोबाइल नंबर', type: 'tel', required: true },
+                    { name: 'dob', label: 'जन्म तिथि', type: 'date', required: true },
+                    { name: 'gender', label: 'लिंग', type: 'select', options: ['पुरुष', 'महिला', 'अन्य'], required: true },
+                    { name: 'address', label: 'पता', type: 'textarea', required: true }
+                ]
+            }
+        };
+
+        function openServiceForm(serviceType) {
+            const modal = document.getElementById('serviceModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const formFields = document.getElementById('formFields');
+            
+            const service = serviceData[serviceType];
+            modalTitle.textContent = service.title;
+            
+            formFields.innerHTML = '';
+            service.fields.forEach(field => {
+                const fieldDiv = document.createElement('div');
+                fieldDiv.className = 'mb-4';
+                
+                let fieldHTML = `<label class="block text-sm font-medium text-gray-700 mb-2">${field.label}</label>`;
+                
+                if (field.type === 'select') {
+                    fieldHTML += `<select name="${field.name}" ${field.required ? 'required' : ''} class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">चुनें</option>`;
+                    field.options.forEach(option => {
+                        fieldHTML += `<option value="${option}">${option}</option>`;
+                    });
+                    fieldHTML += `</select>`;
+                } else if (field.type === 'textarea') {
+                    fieldHTML += `<textarea name="${field.name}" ${field.required ? 'required' : ''} rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>`;
+                } else {
+                    fieldHTML += `<input type="${field.type}" name="${field.name}" ${field.required ? 'required' : ''} class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">`;
+                }
+                
+                fieldDiv.innerHTML = fieldHTML;
+                formFields.appendChild(fieldDiv);
+            });
+            
+            // Add service type hidden field
+            const serviceTypeField = document.createElement('input');
+            serviceTypeField.type = 'hidden';
+            serviceTypeField.name = 'serviceType';
+            serviceTypeField.value = serviceType;
+            formFields.appendChild(serviceTypeField);
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('serviceModal').classList.add('hidden');
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Generate tracking ID
+            const trackingId = 'MST' + Date.now().toString().slice(-8);
+            
+            // Prepare application data
+            const applicationData = {
+                trackingId: trackingId,
+                ...data,
+                submissionDate: new Date().toLocaleDateString('hi-IN'),
+                submissionTime: new Date().toLocaleTimeString('hi-IN'),
+                status: 'आवेदन प्राप्त'
+            };
+            
+            // Show loading message
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'जमा हो रहा है...';
+            submitBtn.disabled = true;
+            
+            // Submit to Google Sheets
+            submitToGoogleSheets(applicationData)
+                .then(() => {
+                    // Store in localStorage as backup
+                    let applications = JSON.parse(localStorage.getItem('applications') || '[]');
+                    applications.push(applicationData);
+                    localStorage.setItem('applications', JSON.stringify(applications));
+                    
+                    // Show success message
+                    alert(`✅ आवेदन सफलतापूर्वक जमा हो गया!\n\n📋 ट्रैकिंग ID: ${trackingId}\n\n💾 डेटा Google Sheets में सेव हो गया\n\nकृपया इस ID को सुरक्षित रखें।`);
+                    closeModal();
+                })
+                .catch((error) => {
+                    console.error('Google Sheets submission error:', error);
+                    
+                    // Store in localStorage as fallback
+                    let applications = JSON.parse(localStorage.getItem('applications') || '[]');
+                    applications.push(applicationData);
+                    localStorage.setItem('applications', JSON.stringify(applications));
+                    
+                    alert(`⚠️ आवेदन जमा हो गया लेकिन Google Sheets में sync नहीं हुआ!\n\n📋 ट्रैकिंग ID: ${trackingId}\n\n💾 डेटा locally सेव है\n\nकृपया इस ID को सुरक्षित रखें।`);
+                    closeModal();
+                })
+                .finally(() => {
+                    // Reset button
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                });
+        }
+
+        function trackApplication() {
+            const trackingId = document.getElementById('trackingId').value.trim();
+            const resultDiv = document.getElementById('trackingResult');
+            
+            if (!trackingId) {
+                alert('कृपया ट्रैकिंग ID डालें');
+                return;
+            }
+            
+            // Get applications from localStorage (replace with actual API call)
+            const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+            const application = applications.find(app => app.trackingId === trackingId);
+            
+            if (application) {
+                resultDiv.innerHTML = `
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-800 mb-2">आवेदन मिल गया!</h4>
+                        <div class="space-y-2 text-sm">
+                            <p><strong>ट्रैकिंग ID:</strong> ${application.trackingId}</p>
+                            <p><strong>नाम:</strong> ${application.fullName}</p>
+                            <p><strong>सेवा:</strong> ${application.serviceType}</p>
+                            <p><strong>जमा तिथि:</strong> ${application.submissionDate}</p>
+                            <p><strong>स्थिति:</strong> <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">${application.status}</span></p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-red-800 mb-2">आवेदन नहीं मिला</h4>
+                        <p class="text-sm text-red-600">कृपया सही ट्रैकिंग ID डालें या हमसे संपर्क करें।</p>
+                    </div>
+                `;
+            }
+            
+            resultDiv.classList.remove('hidden');
+        }
+
+        // Side menu functionality
+        function toggleSideMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const sideMenuContent = document.getElementById('sideMenuContent');
+            
+            if (sideMenu.classList.contains('hidden')) {
+                sideMenu.classList.remove('hidden');
+                setTimeout(() => {
+                    sideMenuContent.classList.add('side-menu-open');
+                }, 10);
+            } else {
+                sideMenuContent.classList.remove('side-menu-open');
+                setTimeout(() => {
+                    sideMenu.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // Authentication modal functionality
+        function openAuthModal(authType) {
+            const modal = document.getElementById('authModal');
+            const modalTitle = document.getElementById('authModalTitle');
+            const formFields = document.getElementById('authFormFields');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            
+            let title, fields, buttonText;
+            
+            switch(authType) {
+                case 'customer-login':
+                    title = 'ग्राहक लॉगिन';
+                    buttonText = 'लॉगिन करें';
+                    fields = [
+                        { name: 'mobile', label: 'मोबाइल नंबर', type: 'tel', required: true },
+                        { name: 'password', label: 'पासवर्ड', type: 'password', required: true }
+                    ];
+                    break;
+                case 'customer-signup':
+                    title = 'ग्राहक साइनअप';
+                    buttonText = 'साइनअप करें';
+                    fields = [
+                        { name: 'fullName', label: 'पूरा नाम', type: 'text', required: true },
+                        { name: 'mobile', label: 'मोबाइल नंबर', type: 'tel', required: true },
+                        { name: 'email', label: 'ईमेल', type: 'email', required: true },
+                        { name: 'password', label: 'पासवर्ड', type: 'password', required: true },
+                        { name: 'confirmPassword', label: 'पासवर्ड कन्फर्म करें', type: 'password', required: true }
+                    ];
+                    break;
+                case 'admin-login':
+                    title = 'एडमिन लॉगिन';
+                    buttonText = 'एडमिन लॉगिन';
+                    fields = [
+                        { name: 'adminId', label: 'एडमिन ID', type: 'text', required: true },
+                        { name: 'password', label: 'पासवर्ड', type: 'password', required: true }
+                    ];
+                    break;
+            }
+            
+            modalTitle.textContent = title;
+            submitBtn.textContent = buttonText;
+            
+            formFields.innerHTML = '';
+            fields.forEach(field => {
+                const fieldDiv = document.createElement('div');
+                fieldDiv.innerHTML = `
+                    <label class="block text-sm font-medium text-gray-700 mb-2">${field.label}</label>
+                    <input type="${field.type}" name="${field.name}" ${field.required ? 'required' : ''} 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                `;
+                formFields.appendChild(fieldDiv);
+            });
+            
+            // Add auth type hidden field
+            const authTypeField = document.createElement('input');
+            authTypeField.type = 'hidden';
+            authTypeField.name = 'authType';
+            authTypeField.value = authType;
+            formFields.appendChild(authTypeField);
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function submitAuthForm(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Basic validation for signup
+            if (data.authType === 'customer-signup' && data.password !== data.confirmPassword) {
+                alert('पासवर्ड मैच नहीं कर रहे हैं!');
+                return;
+            }
+            
+            // Get existing users
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            if (data.authType === 'customer-signup') {
+                // Check if user already exists
+                const existingUser = users.find(user => user.mobile === data.mobile);
+                if (existingUser) {
+                    alert('यह मोबाइल नंबर पहले से रजिस्टर्ड है!');
+                    return;
+                }
+                
+                // Add new user
+                const newUser = {
+                    fullName: data.fullName,
+                    mobile: data.mobile,
+                    email: data.email,
+                    password: data.password,
+                    type: 'customer'
+                };
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                alert('साइनअप सफल! अब आप लॉगिन कर सकते हैं।');
+                closeAuthModal();
+                
+            } else if (data.authType === 'customer-login') {
+                // Check customer login
+                const user = users.find(user => user.mobile === data.mobile && user.password === data.password && user.type === 'customer');
+                if (user) {
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    alert(`स्वागत ${user.fullName}! लॉगिन सफल।`);
+                    closeAuthModal();
+                } else {
+                    alert('गलत मोबाइल नंबर या पासवर्ड! पहले साइनअप करें।');
+                }
+                
+            } else if (data.authType === 'admin-login') {
+                // Admin login check
+                if (data.adminId === '2206' && data.password === '9355') {
+                    const adminUser = { adminId: '2206', type: 'admin', name: 'Admin' };
+                    localStorage.setItem('currentUser', JSON.stringify(adminUser));
+                    alert('एडमिन लॉगिन सफल!');
+                    closeAuthModal();
+                    showAdminDashboard();
+                } else {
+                    alert('गलत एडमिन ID या पासवर्ड!');
+                }
+            }
+        }
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Update recent applications when switching to track tab
+            if (tabName === 'track') {
+                updateRecentApplications();
+            }
+        }
+
+        // Update recent applications display
+        function updateRecentApplications() {
+            const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+            const recentDiv = document.getElementById('recentApplications');
+            
+            if (applications.length === 0) {
+                recentDiv.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <div class="text-4xl mb-2">📋</div>
+                        <p>कोई हाल का आवेदन नहीं मिला</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const recentApps = applications.slice(-5).reverse(); // Show last 5 applications
+            recentDiv.innerHTML = recentApps.map(app => `
+                <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-blue-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-medium text-sm">${app.fullName}</p>
+                            <p class="text-xs text-gray-600">${app.serviceType}</p>
+                            <p class="text-xs text-gray-500 mt-1">ID: ${app.trackingId}</p>
+                        </div>
+                        <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">${app.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Google Sheets Configuration
+        const GOOGLE_SHEETS_CONFIG = {
+            // Replace with your Google Apps Script Web App URL
+            scriptUrl: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
+            
+            // Alternative: Google Sheets API (requires API key)
+            sheetsApiUrl: 'https://sheets.googleapis.com/v4/spreadsheets/YOUR_SHEET_ID/values/Sheet1!A:Z:append',
+            apiKey: 'YOUR_API_KEY'
+        };
+
+        // Method 1: Submit to Google Sheets via Google Apps Script
+        async function submitToGoogleSheets(data) {
+            try {
+                // Prepare data for Google Sheets
+                const sheetData = {
+                    timestamp: new Date().toISOString(),
+                    trackingId: data.trackingId,
+                    serviceType: data.serviceType,
+                    fullName: data.fullName,
+                    mobile: data.mobile,
+                    email: data.email || '',
+                    address: data.address || '',
+                    status: data.status,
+                    submissionDate: data.submissionDate,
+                    submissionTime: data.submissionTime,
+                    // Add all other form fields
+                    ...data
+                };
+
+                // Submit using fetch API
+                const response = await fetch(GOOGLE_SHEETS_CONFIG.scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors', // Important for Google Apps Script
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sheetData)
+                });
+
+                // Note: no-cors mode doesn't allow reading response
+                // We assume success if no error is thrown
+                console.log('Data submitted to Google Sheets successfully');
+                return Promise.resolve();
+
+            } catch (error) {
+                console.error('Error submitting to Google Sheets:', error);
+                throw error;
+            }
+        }
+
+        // Method 2: Alternative Google Sheets API method (requires API key)
+        async function submitToGoogleSheetsAPI(data) {
+            try {
+                const values = [
+                    [
+                        new Date().toISOString(),
+                        data.trackingId,
+                        data.serviceType,
+                        data.fullName,
+                        data.mobile,
+                        data.email || '',
+                        data.address || '',
+                        data.status,
+                        data.submissionDate,
+                        data.submissionTime
+                    ]
+                ];
+
+                const response = await fetch(`${GOOGLE_SHEETS_CONFIG.sheetsApiUrl}?key=${GOOGLE_SHEETS_CONFIG.apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        values: values,
+                        valueInputOption: 'RAW'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('Data submitted to Google Sheets API successfully:', result);
+                return result;
+
+            } catch (error) {
+                console.error('Error submitting to Google Sheets API:', error);
+                throw error;
+            }
+        }
+
+        // Method 3: Submit to Google Forms (alternative approach)
+        async function submitToGoogleForms(data) {
+            try {
+                // Replace with your Google Form URL and field IDs
+                const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
+                
+                const formData = new FormData();
+                formData.append('entry.FIELD_ID_1', data.trackingId); // Replace with actual field IDs
+                formData.append('entry.FIELD_ID_2', data.fullName);
+                formData.append('entry.FIELD_ID_3', data.mobile);
+                formData.append('entry.FIELD_ID_4', data.serviceType);
+                // Add more fields as needed
+
+                const response = await fetch(GOOGLE_FORM_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+
+                console.log('Data submitted to Google Forms successfully');
+                return Promise.resolve();
+
+            } catch (error) {
+                console.error('Error submitting to Google Forms:', error);
+                throw error;
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('serviceModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close auth modal when clicking outside
+        document.getElementById('authModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAuthModal();
+            }
+        });
+
+        // Close side menu when clicking outside
+        document.getElementById('sideMenu').addEventListener('click', function(e) {
+            if (e.target === this) {
+                toggleSideMenu();
+            }
+        });
+
+        // Admin Dashboard Functions
+        function showAdminDashboard() {
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.remove('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            alert('लॉगआउट सफल!');
+        }
+
+        function showAdminSection(sectionName) {
+            // Hide all admin sections
+            const sections = document.querySelectorAll('.admin-section');
+            sections.forEach(section => section.classList.add('hidden'));
+            
+            // Show selected section
+            document.getElementById(sectionName + 'Section').classList.remove('hidden');
+            
+            if (sectionName === 'manageServices') {
+                loadServicesList();
+            }
+        }
+
+        function updateHomePage(event) {
+            event.preventDefault();
+            
+            const storeName = document.getElementById('storeName').value;
+            const tagline = document.getElementById('tagline').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const address = document.getElementById('address').value;
+            
+            // Update header
+            const headerTitle = document.querySelector('header h1');
+            const headerTagline = document.querySelector('header p');
+            if (headerTitle) headerTitle.textContent = storeName;
+            if (headerTagline) headerTagline.textContent = tagline;
+            
+            // Save to localStorage
+            const homeData = { storeName, tagline, phoneNumber, address };
+            localStorage.setItem('homePageData', JSON.stringify(homeData));
+            
+            alert('होम पेज अपडेट हो गया!');
+        }
+
+        function loadServicesList() {
+            const servicesList = document.getElementById('servicesList');
+            const services = Object.keys(serviceData);
+            
+            servicesList.innerHTML = services.map(serviceKey => {
+                const service = serviceData[serviceKey];
+                return `
+                    <div class="bg-gray-50 rounded-lg p-4 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-medium">${service.title}</h4>
+                            <p class="text-sm text-gray-600">${service.fields.length} फील्ड्स</p>
+                        </div>
+                        <div class="space-x-2">
+                            <button onclick="editService('${serviceKey}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                                एडिट
+                            </button>
+                            <button onclick="deleteService('${serviceKey}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                                डिलीट
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showAddServiceForm() {
+            const modal = document.getElementById('serviceModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const formFields = document.getElementById('formFields');
+            
+            modalTitle.textContent = 'नई सेवा जोड़ें';
+            
+            formFields.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">सेवा का नाम</label>
+                        <input type="text" name="serviceTitle" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">सेवा आइकन (इमोजी)</label>
+                        <input type="text" name="serviceIcon" placeholder="🏛️" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">सेवा विवरण</label>
+                        <textarea name="serviceDescription" rows="3" required class="w-full px-3 py-2 border border-gray-300 rounded-lg"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">सेवा शुल्क</label>
+                        <input type="text" name="serviceFee" placeholder="₹100 + सेवा शुल्क" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function editService(serviceKey) {
+            alert(`${serviceData[serviceKey].title} को एडिट करने का फीचर जल्द आएगा!`);
+        }
+
+        function deleteService(serviceKey) {
+            if (confirm(`क्या आप ${serviceData[serviceKey].title} को डिलीट करना चाहते हैं?`)) {
+                delete serviceData[serviceKey];
+                loadServicesList();
+                alert('सेवा डिलीट हो गई!');
+            }
+        }
+
+        function addOffer(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const offerData = Object.fromEntries(formData.entries());
+            
+            // Get existing offers
+            let offers = JSON.parse(localStorage.getItem('offers') || '[]');
+            offers.push({
+                id: Date.now(),
+                ...offerData,
+                createdDate: new Date().toLocaleDateString('hi-IN')
+            });
+            
+            localStorage.setItem('offers', JSON.stringify(offers));
+            
+            alert('ऑफर जोड़ा गया!');
+            event.target.reset();
+            loadOffers();
+        }
+
+        // Global variable to store uploaded image data
+        let uploadedImageData = null;
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Check file size (5MB limit)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('फाइल का साइज़ 5MB से ज्यादा है! कृपया छोटी फाइल चुनें।');
+                event.target.value = '';
+                return;
+            }
+            
+            // Check file type
+            if (!file.type.startsWith('image/')) {
+                alert('कृपया केवल इमेज फाइल अपलोड करें!');
+                event.target.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedImageData = e.target.result;
+                showImagePreview(uploadedImageData);
+                
+                // Clear URL input when file is uploaded
+                const urlInput = document.querySelector('input[name="bannerImageUrl"]');
+                if (urlInput) urlInput.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showImagePreview(imageSrc) {
+            const previewDiv = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            
+            previewImg.src = imageSrc;
+            previewDiv.classList.remove('hidden');
+        }
+
+        function removeImagePreview() {
+            const previewDiv = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            const fileInput = document.getElementById('bannerFileInput');
+            const urlInput = document.querySelector('input[name="bannerImageUrl"]');
+            
+            previewDiv.classList.add('hidden');
+            previewImg.src = '';
+            fileInput.value = '';
+            if (urlInput) urlInput.value = '';
+            uploadedImageData = null;
+        }
+
+        function addBanner(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const bannerData = Object.fromEntries(formData.entries());
+            
+            // Determine image source (uploaded file or URL)
+            let bannerImage = null;
+            if (uploadedImageData) {
+                bannerImage = uploadedImageData; // Base64 data from uploaded file
+            } else if (bannerData.bannerImageUrl) {
+                bannerImage = bannerData.bannerImageUrl; // URL from input
+            }
+            
+            // Get existing banners
+            let banners = JSON.parse(localStorage.getItem('banners') || '[]');
+            banners.push({
+                id: Date.now(),
+                bannerText: bannerData.bannerText,
+                bannerImage: bannerImage,
+                bannerColor: bannerData.bannerColor,
+                bannerType: bannerData.bannerType,
+                createdDate: new Date().toLocaleDateString('hi-IN')
+            });
+            
+            localStorage.setItem('banners', JSON.stringify(banners));
+            
+            alert('बैनर जोड़ा गया!');
+            event.target.reset();
+            removeImagePreview();
+            loadBanners();
+        }
+
+        function loadOffers() {
+            const offers = JSON.parse(localStorage.getItem('offers') || '[]');
+            const offersSection = document.getElementById('offersSection');
+            const offersList = document.getElementById('offersList');
+            
+            if (offers.length > 0) {
+                offersSection.classList.remove('hidden');
+                offersList.innerHTML = offers.map(offer => `
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg">${offer.offerTitle}</h3>
+                                <p class="text-sm opacity-90 mt-1">${offer.offerDescription}</p>
+                                <div class="mt-2">
+                                    <span class="bg-white text-purple-600 px-2 py-1 rounded-full text-sm font-bold">
+                                        ${offer.discount}% छूट
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="text-right text-sm opacity-75">
+                                <p>समाप्ति: ${new Date(offer.expiryDate).toLocaleDateString('hi-IN')}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                offersSection.classList.add('hidden');
+            }
+        }
+
+        function loadBanners() {
+            const banners = JSON.parse(localStorage.getItem('banners') || '[]');
+            const heroSection = document.getElementById('heroSection');
+            
+            if (banners.length > 0) {
+                heroSection.innerHTML = banners.map(banner => {
+                    const colorClass = {
+                        'blue': 'from-blue-500 to-blue-600',
+                        'green': 'from-green-500 to-green-600',
+                        'red': 'from-red-500 to-red-600',
+                        'purple': 'from-purple-500 to-purple-600',
+                        'orange': 'from-orange-500 to-orange-600'
+                    }[banner.bannerColor] || 'from-blue-500 to-blue-600';
+                    
+                    const icon = {
+                        'announcement': '📢',
+                        'offer': '🎁',
+                        'news': '📰'
+                    }[banner.bannerType] || '📢';
+                    
+                    return `
+                        <div class="bg-gradient-to-r ${colorClass} text-white rounded-lg mb-3 relative overflow-hidden min-h-[120px]">
+                            ${banner.bannerImage ? 
+                                `<div class="absolute inset-0">
+                                    <img src="${banner.bannerImage}" alt="Banner Image" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-4xl\\'>${icon}</div>';">
+                                    <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+                                </div>` : 
+                                `<div class="flex items-center justify-center h-full text-4xl absolute inset-0">${icon}</div>`
+                            }
+                            <div class="relative z-10 p-4 h-full flex flex-col justify-center">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex-1">
+                                        <p class="font-bold text-lg mb-1 drop-shadow-lg">${banner.bannerText}</p>
+                                        <p class="text-sm opacity-90 drop-shadow">${banner.bannerType === 'announcement' ? 'घोषणा' : banner.bannerType === 'offer' ? 'विशेष ऑफर' : 'समाचार'}</p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button onclick="editBanner(${banner.id})" class="bg-white/20 hover:bg-white/30 text-white rounded-full w-8 h-8 text-sm transition-colors flex items-center justify-center" title="बैनर एडिट करें">
+                                            ✏️
+                                        </button>
+                                        <button onclick="deleteBanner(${banner.id})" class="bg-white/20 hover:bg-white/30 text-white rounded-full w-8 h-8 text-sm transition-colors flex items-center justify-center" title="बैनर डिलीट करें">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function editBanner(bannerId) {
+            const banners = JSON.parse(localStorage.getItem('banners') || '[]');
+            const banner = banners.find(b => b.id === bannerId);
+            
+            if (!banner) {
+                alert('बैनर नहीं मिला!');
+                return;
+            }
+            
+            const modal = document.getElementById('serviceModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const formFields = document.getElementById('formFields');
+            
+            modalTitle.textContent = 'बैनर एडिट करें';
+            
+            formFields.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">बैनर टेक्स्ट</label>
+                        <input type="text" name="bannerText" value="${banner.bannerText}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    
+                    <!-- Current Image Display -->
+                    ${banner.bannerImage ? `
+                        <div class="border rounded-lg p-3 bg-gray-50">
+                            <p class="text-sm font-medium text-gray-700 mb-2">मौजूदा इमेज:</p>
+                            <div class="relative inline-block">
+                                <img src="${banner.bannerImage}" alt="Current Banner" class="max-w-32 max-h-32 rounded-lg border">
+                                <button type="button" onclick="removeCurrentBannerImage()" 
+                                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs hover:bg-red-600">
+                                    ×
+                                </button>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Image Upload Options -->
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                        <h4 class="font-medium text-gray-700 mb-3">नई इमेज (वैकल्पिक)</h4>
+                        
+                        <!-- File Upload Option -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">📁 फाइल अपलोड करें</label>
+                            <input type="file" id="editBannerFileInput" accept="image/*" onchange="handleEditFileUpload(event)" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                        
+                        <div class="text-center text-gray-500 text-sm mb-4">या</div>
+                        
+                        <!-- URL Input Option -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">🔗 इमेज URL डालें</label>
+                            <input type="url" name="bannerImageUrl" placeholder="https://example.com/image.jpg" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                        
+                        <!-- Image Preview -->
+                        <div id="editImagePreview" class="mt-4 hidden">
+                            <p class="text-sm font-medium text-gray-700 mb-2">नई इमेज प्रीव्यू:</p>
+                            <div class="relative inline-block">
+                                <img id="editPreviewImg" src="" alt="Preview" class="max-w-32 max-h-32 rounded-lg border">
+                                <button type="button" onclick="removeEditImagePreview()" 
+                                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs hover:bg-red-600">
+                                    ×
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">बैनर रंग</label>
+                        <select name="bannerColor" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="blue" ${banner.bannerColor === 'blue' ? 'selected' : ''}>नीला</option>
+                            <option value="green" ${banner.bannerColor === 'green' ? 'selected' : ''}>हरा</option>
+                            <option value="red" ${banner.bannerColor === 'red' ? 'selected' : ''}>लाल</option>
+                            <option value="purple" ${banner.bannerColor === 'purple' ? 'selected' : ''}>बैंगनी</option>
+                            <option value="orange" ${banner.bannerColor === 'orange' ? 'selected' : ''}>नारंगी</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">बैनर प्रकार</label>
+                        <select name="bannerType" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="announcement" ${banner.bannerType === 'announcement' ? 'selected' : ''}>घोषणा</option>
+                            <option value="offer" ${banner.bannerType === 'offer' ? 'selected' : ''}>ऑफर</option>
+                            <option value="news" ${banner.bannerType === 'news' ? 'selected' : ''}>समाचार</option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="editBannerId" value="${bannerId}">
+                    <input type="hidden" name="currentBannerImage" value="${banner.bannerImage || ''}">
+                </div>
+            `;
+            
+            // Update form submit handler for editing
+            const form = document.getElementById('serviceForm');
+            form.onsubmit = updateBanner;
+            
+            // Update submit button text
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.textContent = 'बैनर अपडेट करें';
+            
+            modal.classList.remove('hidden');
+        }
+
+        // Global variable for edit mode
+        let editUploadedImageData = null;
+
+        function handleEditFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Check file size (5MB limit)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('फाइल का साइज़ 5MB से ज्यादा है! कृपया छोटी फाइल चुनें।');
+                event.target.value = '';
+                return;
+            }
+            
+            // Check file type
+            if (!file.type.startsWith('image/')) {
+                alert('कृपया केवल इमेज फाइल अपलोड करें!');
+                event.target.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                editUploadedImageData = e.target.result;
+                showEditImagePreview(editUploadedImageData);
+                
+                // Clear URL input when file is uploaded
+                const urlInput = document.querySelector('input[name="bannerImageUrl"]');
+                if (urlInput) urlInput.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showEditImagePreview(imageSrc) {
+            const previewDiv = document.getElementById('editImagePreview');
+            const previewImg = document.getElementById('editPreviewImg');
+            
+            previewImg.src = imageSrc;
+            previewDiv.classList.remove('hidden');
+        }
+
+        function removeEditImagePreview() {
+            const previewDiv = document.getElementById('editImagePreview');
+            const previewImg = document.getElementById('editPreviewImg');
+            const fileInput = document.getElementById('editBannerFileInput');
+            const urlInput = document.querySelector('input[name="bannerImageUrl"]');
+            
+            previewDiv.classList.add('hidden');
+            previewImg.src = '';
+            if (fileInput) fileInput.value = '';
+            if (urlInput) urlInput.value = '';
+            editUploadedImageData = null;
+        }
+
+        function removeCurrentBannerImage() {
+            const currentImageInput = document.querySelector('input[name="currentBannerImage"]');
+            if (currentImageInput) {
+                currentImageInput.value = '';
+            }
+            
+            // Hide the current image display
+            const currentImageDiv = document.querySelector('.border.rounded-lg.p-3.bg-gray-50');
+            if (currentImageDiv) {
+                currentImageDiv.style.display = 'none';
+            }
+        }
+
+        function updateBanner(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            const bannerId = parseInt(data.editBannerId);
+            
+            // Determine image source (uploaded file, URL, or keep current)
+            let bannerImage = data.currentBannerImage; // Keep current image by default
+            
+            if (editUploadedImageData) {
+                bannerImage = editUploadedImageData; // Use newly uploaded file
+            } else if (data.bannerImageUrl) {
+                bannerImage = data.bannerImageUrl; // Use new URL
+            }
+            
+            // Get existing banners and update the specific one
+            let banners = JSON.parse(localStorage.getItem('banners') || '[]');
+            const bannerIndex = banners.findIndex(banner => banner.id === bannerId);
+            
+            if (bannerIndex !== -1) {
+                banners[bannerIndex] = {
+                    ...banners[bannerIndex],
+                    bannerText: data.bannerText,
+                    bannerImage: bannerImage,
+                    bannerColor: data.bannerColor,
+                    bannerType: data.bannerType,
+                    updatedDate: new Date().toLocaleDateString('hi-IN')
+                };
+                
+                localStorage.setItem('banners', JSON.stringify(banners));
+                
+                alert('बैनर अपडेट हो गया!');
+                closeModal();
+                loadBanners();
+                
+                // Reset form handler and button text
+                const form = document.getElementById('serviceForm');
+                form.onsubmit = submitForm;
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'आवेदन जमा करें';
+                
+                // Clear edit variables
+                editUploadedImageData = null;
+            } else {
+                alert('बैनर अपडेट करने में त्रुटि!');
+            }
+        }
+
+        function deleteBanner(bannerId) {
+            if (confirm('क्या आप इस बैनर को डिलीट करना चाहते हैं?')) {
+                let banners = JSON.parse(localStorage.getItem('banners') || '[]');
+                banners = banners.filter(banner => banner.id !== bannerId);
+                localStorage.setItem('banners', JSON.stringify(banners));
+                loadBanners();
+                alert('बैनर डिलीट हो गया!');
+            }
+        }
+
+        // Profile functions
+        function showApplicationReport() {
+            const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+            const totalApps = applications.length;
+            const pendingApps = applications.filter(app => app.status === 'आवेदन प्राप्त').length;
+            const completedApps = applications.filter(app => app.status === 'पूर्ण').length;
+            
+            alert(`📊 आवेदन रिपोर्ट:\n\n• कुल आवेदन: ${totalApps}\n• लंबित आवेदन: ${pendingApps}\n• पूर्ण आवेदन: ${completedApps}\n• सफलता दर: ${totalApps > 0 ? Math.round((completedApps/totalApps)*100) : 0}%`);
+        }
+
+        function showSettings() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const isLoggedIn = currentUser.type === 'customer' || currentUser.type === 'admin';
+            
+            if (isLoggedIn) {
+                alert(`⚙️ सेटिंग्स:\n\n• नोटिफिकेशन: चालू\n• भाषा: हिंदी\n• थीम: लाइट मोड\n• डेटा सेव: चालू\n\nअधिक सेटिंग्स जल्द आएंगी!`);
+            } else {
+                alert('सेटिंग्स देखने के लिए पहले लॉगिन करें।');
+            }
+        }
+
+        // Google Sheets Configuration Functions
+        function saveGoogleSheetsConfig() {
+            const scriptUrl = document.getElementById('googleScriptUrl').value.trim();
+            const sheetId = document.getElementById('googleSheetId').value.trim();
+            
+            if (!scriptUrl || !sheetId) {
+                alert('कृपया सभी फील्ड भरें!');
+                return;
+            }
+            
+            // Update the configuration
+            GOOGLE_SHEETS_CONFIG.scriptUrl = scriptUrl;
+            GOOGLE_SHEETS_CONFIG.sheetId = sheetId;
+            
+            // Save to localStorage
+            const config = {
+                scriptUrl: scriptUrl,
+                sheetId: sheetId,
+                savedAt: new Date().toISOString()
+            };
+            localStorage.setItem('googleSheetsConfig', JSON.stringify(config));
+            
+            alert('✅ Google Sheets कॉन्फ़िगरेशन सेव हो गई!\n\nअब आवेदन डेटा Google Sheets में जाएगा।');
+        }
+        
+        function testGoogleSheetsConnection() {
+            const scriptUrl = document.getElementById('googleScriptUrl').value.trim();
+            
+            if (!scriptUrl) {
+                alert('पहले Google Apps Script URL डालें!');
+                return;
+            }
+            
+            // Test data
+            const testData = {
+                timestamp: new Date().toISOString(),
+                trackingId: 'TEST' + Date.now(),
+                serviceType: 'Test Connection',
+                fullName: 'Test User',
+                mobile: '9999999999',
+                email: 'test@example.com',
+                address: 'Test Address',
+                status: 'Test Entry',
+                submissionDate: new Date().toLocaleDateString('hi-IN'),
+                submissionTime: new Date().toLocaleTimeString('hi-IN')
+            };
+            
+            // Show loading
+            const testBtn = event.target;
+            const originalText = testBtn.textContent;
+            testBtn.textContent = 'टेस्ट हो रहा है...';
+            testBtn.disabled = true;
+            
+            // Test the connection
+            fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(testData)
+            })
+            .then(() => {
+                alert('✅ कनेक्शन सफल!\n\nGoogle Sheets में test entry add हो गई। Sheet check करें।');
+            })
+            .catch((error) => {
+                console.error('Connection test failed:', error);
+                alert('❌ कनेक्शन फेल!\n\nकृपया URL और Apps Script setup check करें।');
+            })
+            .finally(() => {
+                testBtn.textContent = originalText;
+                testBtn.disabled = false;
+            });
+        }
+        
+        function loadGoogleSheetsConfig() {
+            const savedConfig = localStorage.getItem('googleSheetsConfig');
+            if (savedConfig) {
+                const config = JSON.parse(savedConfig);
+                
+                // Update the global configuration
+                GOOGLE_SHEETS_CONFIG.scriptUrl = config.scriptUrl;
+                GOOGLE_SHEETS_CONFIG.sheetId = config.sheetId;
+                
+                // Update the form fields if they exist
+                const scriptUrlField = document.getElementById('googleScriptUrl');
+                const sheetIdField = document.getElementById('googleSheetId');
+                
+                if (scriptUrlField) scriptUrlField.value = config.scriptUrl;
+                if (sheetIdField) sheetIdField.value = config.sheetId;
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default tab
+            switchTab('home');
+            
+            // Load dynamic content
+            loadOffers();
+            loadBanners();
+            loadGoogleSheetsConfig();
+            
+            // Load saved home page data
+            const homeData = JSON.parse(localStorage.getItem('homePageData') || '{}');
+            if (homeData.storeName) {
+                const headerTitle = document.querySelector('header h1');
+                const headerTagline = document.querySelector('header p');
+                if (headerTitle) headerTitle.textContent = homeData.storeName;
+                if (headerTagline) headerTagline.textContent = homeData.tagline;
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'982fde7cd6d459d5',t:'MTc1ODUyMzgzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
