@@ -814,100 +814,159 @@
                 return;
             }
 
-            // User credentials - Enhanced cross-device login
+            // User credentials - Enhanced cross-device login with JSONBin
             if (userType === 'user') {
-                // Show loading message immediately
                 const loginBtn = document.getElementById('loginSubmit');
                 const originalText = loginBtn.innerHTML;
-                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>सभी devices से डेटा check हो रहा है...';
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>सभी devices से user data check हो रहा है...';
                 loginBtn.disabled = true;
 
                 try {
                     console.log('🔍 Starting cross-device login for mobile:', mobile);
+                    console.log('📱 Device:', getDeviceInfo());
                     
-                    // Step 1: Always try to sync from database first (most important for cross-device)
-                    let databaseUser = null;
-                    try {
-                        console.log('📥 Syncing users from database...');
-                        await syncUsersFromDatabase();
-                        console.log('✅ Database sync completed');
-                        
-                        // Check if user exists in database
-                        databaseUser = registeredUsers.find(u => u.mobile === mobile && u.password === password);
-                        if (databaseUser) {
-                            console.log('👤 User found in database:', databaseUser.name);
+                    // Step 1: ALWAYS fetch latest users from JSONBin first (critical for cross-device)
+                    let foundUser = null;
+                    
+                    if (activeDatabase === 'jsonbin' && databaseConfig && databaseConfig.apiKey) {
+                        try {
+                            console.log('🌐 Fetching latest users from JSONBin for cross-device login...');
+                            
+                            const binId = databaseConfig.binId;
+                            const apiKey = databaseConfig.apiKey;
+                            
+                            if (binId) {
+                                const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                                    headers: {
+                                        'X-Master-Key': apiKey,
+                                        'X-Bin-Meta': 'false'
+                                    }
+                                });
+                                
+                                if (response.ok) {
+                                    const result = await response.json();
+                                    const data = result.record;
+                                    
+                                    if (data.users && Array.isArray(data.users)) {
+                                        console.log(`📥 Found ${data.users.length} users in JSONBin database`);
+                                        
+                                        // Replace local users with database users for cross-device sync
+                                        registeredUsers = [...data.users];
+                                        localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                                        
+                                        // Find user in database
+                                        foundUser = registeredUsers.find(u => u.mobile === mobile && u.password === password);
+                                        
+                                        if (foundUser) {
+                                            console.log('✅ User found in JSONBin database:', foundUser.name);
+                                            console.log('📊 User details:', {
+                                                name: foundUser.name,
+                                                mobile: foundUser.mobile,
+                                                createdAt: foundUser.createdAt,
+                                                lastLogin: foundUser.lastLogin,
+                                                loginCount: foundUser.loginCount || 0
+                                            });
+                                        } else {
+                                            console.log('❌ User not found in JSONBin database');
+                                        }
+                                    } else {
+                                        console.log('📝 No users array found in JSONBin');
+                                    }
+                                } else {
+                                    console.warn('⚠️ JSONBin fetch failed:', response.status);
+                                }
+                            }
+                        } catch (dbError) {
+                            console.warn('⚠️ JSONBin fetch error:', dbError.message);
                         }
-                    } catch (dbError) {
-                        console.warn('⚠️ Database sync failed, will check local storage:', dbError.message);
                     }
                     
-                    // Step 2: Check local storage as backup
-                    let localUser = registeredUsers.find(u => u.mobile === mobile && u.password === password);
+                    // Step 2: If not found in database, check local storage as backup
+                    if (!foundUser) {
+                        console.log('🔍 Checking local storage as backup...');
+                        foundUser = registeredUsers.find(u => u.mobile === mobile && u.password === password);
+                        
+                        if (foundUser) {
+                            console.log('📱 User found in local storage:', foundUser.name);
+                        }
+                    }
                     
-                    // Step 3: Use database user if available, otherwise local user
-                    const user = databaseUser || localUser;
-                    
-                    if (user) {
-                        console.log('✅ Login successful for:', user.name);
+                    // Step 3: Process login if user found
+                    if (foundUser) {
+                        console.log('🎉 Login successful for:', foundUser.name);
                         
-                        currentUser = { 
-                            type: userType, 
-                            mobile: mobile, 
-                            name: user.name, 
-                            email: user.email 
-                        };
+                        // Update user login information
+                        foundUser.lastLogin = new Date().toISOString();
+                        foundUser.lastDevice = getDeviceInfo();
+                        foundUser.loginCount = (foundUser.loginCount || 0) + 1;
+                        foundUser.lastLoginTimestamp = Date.now();
                         
-                        // Update last login info
-                        user.lastLogin = new Date().toISOString();
-                        user.lastDevice = getDeviceInfo();
-                        user.loginCount = (user.loginCount || 0) + 1;
-                        
-                        // Update local storage
+                        // Update in local storage
                         const userIndex = registeredUsers.findIndex(u => u.mobile === mobile);
                         if (userIndex >= 0) {
-                            registeredUsers[userIndex] = user;
-                        } else {
-                            registeredUsers.push(user);
+                            registeredUsers[userIndex] = foundUser;
                         }
                         localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
                         
-                        // Try to update database (don't fail login if this fails)
-                        try {
-                            await updateUserInDatabase(user);
-                            console.log('💾 User login info updated in database');
-                        } catch (updateError) {
-                            console.warn('⚠️ Could not update database, but login successful:', updateError.message);
+                        // Update in JSONBin database
+                        if (activeDatabase === 'jsonbin' && databaseConfig) {
+                            try {
+                                await updateUserInJsonBinDatabase(foundUser);
+                                console.log('💾 User login info updated in JSONBin');
+                            } catch (updateError) {
+                                console.warn('⚠️ Could not update JSONBin, but login successful:', updateError.message);
+                            }
                         }
                         
+                        // Set current user
+                        currentUser = { 
+                            type: userType, 
+                            mobile: mobile, 
+                            name: foundUser.name, 
+                            email: foundUser.email 
+                        };
+                        
+                        // Close login modal and update UI
                         loginModal.classList.add('hidden');
                         clearLoginForm();
+                        updateUI();
                         
                         // Show success message with device info
                         const deviceType = getDeviceType();
-                        alert(`🎉 स्वागत है ${user.name}!\n\n📱 Device: ${deviceType}\n🔄 आपका डेटा सभी devices में sync हो रहा है...\n\n✅ Login Count: ${user.loginCount}`);
+                        const syncStatus = activeDatabase === 'jsonbin' ? '🌐 JSONBin Sync ON' : '📱 Local Only';
                         
-                        // Load user's applications from database (cross-device sync)
+                        alert(`🎉 स्वागत है ${foundUser.name}!\n\n` +
+                              `📱 Device: ${deviceType}\n` +
+                              `🔄 Sync Status: ${syncStatus}\n` +
+                              `📊 Login Count: ${foundUser.loginCount}\n` +
+                              `⏰ Last Login: ${foundUser.lastLogin ? new Date(foundUser.lastLogin).toLocaleString('hi-IN') : 'पहली बार'}\n\n` +
+                              `✅ आपका डेटा सभी devices में available है!`);
+                        
+                        // Load user's applications from database
                         try {
                             await loadUserApplicationsFromDatabase();
                             console.log('📋 User applications synced from database');
                         } catch (appError) {
-                            console.warn('⚠️ Could not sync applications, using local data:', appError.message);
+                            console.warn('⚠️ Could not sync applications:', appError.message);
                         }
-                        
-                        updateUI();
                         
                     } else {
                         console.log('❌ User not found with mobile:', mobile);
                         
-                        // Enhanced error message for cross-device issues
+                        // Enhanced error message
+                        const dbStatus = activeDatabase === 'jsonbin' ? 'JSONBin Connected' : 'No Database';
+                        const userCount = registeredUsers.length;
+                        
                         const errorMsg = `❌ लॉगिन नहीं हो सका!\n\n` +
                                        `📱 Mobile: ${mobile}\n` +
-                                       `🔍 यह mobile number registered नहीं है\n\n` +
+                                       `🔍 यह mobile number registered नहीं है\n` +
+                                       `📊 Database: ${dbStatus}\n` +
+                                       `👥 Total Users: ${userCount}\n\n` +
                                        `💡 समाधान:\n` +
                                        `1. Mobile number सही check करें\n` +
                                        `2. Password सही check करें\n` +
-                                       `3. अगर पहली बार है तो "साइनअप करें" पर click करें\n\n` +
-                                       `🌐 Cross-device sync: ${activeDatabase ? 'ON' : 'OFF'}`;
+                                       `3. अगर पहली बार है तो "साइनअप करें" पर click करें\n` +
+                                       `4. Internet connection check करें`;
                         
                         alert(errorMsg);
                     }
@@ -937,7 +996,7 @@
             alert('गलत लॉगिन जानकारी');
         }
 
-        function handleSignup() {
+        async function handleSignup() {
             const name = document.getElementById('signupName').value.trim();
             const mobile = document.getElementById('signupMobile').value.trim();
             const password = document.getElementById('signupPassword').value;
@@ -971,40 +1030,115 @@
                 return;
             }
 
-            // Check if user already exists
-            const existingUser = registeredUsers.find(u => u.mobile === mobile);
-            if (existingUser) {
-                alert('इस मोबाइल नंबर से पहले से अकाउंट है। कृपया लॉगिन करें।');
-                showLoginForm();
-                document.getElementById('mobile').value = mobile;
-                return;
+            const signupBtn = document.getElementById('signupSubmit');
+            const originalText = signupBtn.innerHTML;
+            signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>अकाउंट बन रहा है...';
+            signupBtn.disabled = true;
+
+            try {
+                // Step 1: Check if user already exists (fetch latest data from JSONBin first)
+                if (activeDatabase === 'jsonbin' && databaseConfig && databaseConfig.apiKey) {
+                    try {
+                        console.log('🔍 Checking existing users in JSONBin...');
+                        
+                        const binId = databaseConfig.binId;
+                        const apiKey = databaseConfig.apiKey;
+                        
+                        if (binId) {
+                            const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                                headers: {
+                                    'X-Master-Key': apiKey,
+                                    'X-Bin-Meta': 'false'
+                                }
+                            });
+                            
+                            if (response.ok) {
+                                const result = await response.json();
+                                const data = result.record;
+                                
+                                if (data.users && Array.isArray(data.users)) {
+                                    registeredUsers = [...data.users];
+                                    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                                    console.log(`📥 Loaded ${data.users.length} existing users from JSONBin`);
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.warn('⚠️ Could not fetch existing users, continuing with local check');
+                    }
+                }
+
+                // Check if user already exists
+                const existingUser = registeredUsers.find(u => u.mobile === mobile);
+                if (existingUser) {
+                    alert('इस मोबाइल नंबर से पहले से अकाउंट है। कृपया लॉगिन करें।');
+                    showLoginForm();
+                    document.getElementById('mobile').value = mobile;
+                    return;
+                }
+
+                // Step 2: Create new user
+                const newUser = {
+                    id: 'USER' + Date.now(),
+                    name: name,
+                    mobile: mobile,
+                    password: password,
+                    email: email || null,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: new Date().toISOString(),
+                    signupDevice: getDeviceInfo(),
+                    loginCount: 1,
+                    lastLoginTimestamp: Date.now()
+                };
+
+                console.log('👤 Creating new user:', {
+                    name: newUser.name,
+                    mobile: newUser.mobile,
+                    device: newUser.signupDevice
+                });
+
+                // Step 3: Save user locally
+                registeredUsers.push(newUser);
+                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+
+                // Step 4: Save to JSONBin database for cross-device access
+                let savedToDatabase = false;
+                if (activeDatabase === 'jsonbin' && databaseConfig) {
+                    try {
+                        await saveUserToJsonBinDatabase(newUser);
+                        savedToDatabase = true;
+                        console.log('💾 User saved to JSONBin successfully');
+                    } catch (dbError) {
+                        console.warn('⚠️ Could not save to JSONBin:', dbError.message);
+                    }
+                }
+
+                // Step 5: Auto login
+                currentUser = { type: 'user', mobile: mobile, name: name, email: email };
+                loginModal.classList.add('hidden');
+                updateUI();
+                clearSignupForm();
+
+                // Step 6: Show success message
+                const deviceType = getDeviceType();
+                const syncStatus = savedToDatabase ? '🌐 JSONBin में save हो गया' : '📱 Local में save हो गया';
+                
+                alert(`🎉 अकाउंट सफलतापूर्वक बना गया!\n\n` +
+                      `👤 नाम: ${name}\n` +
+                      `📱 Mobile: ${mobile}\n` +
+                      `🖥️ Device: ${deviceType}\n` +
+                      `💾 Status: ${syncStatus}\n\n` +
+                      `✅ अब आप सभी devices से login कर सकते हैं!\n` +
+                      `🔄 आपका डेटा automatically sync होता रहेगा।`);
+
+            } catch (error) {
+                console.error('❌ Signup process failed:', error);
+                alert(`❌ अकाउंट बनाने में समस्या हुई\n\n🔧 Error: ${error.message}\n\n💡 कृपया:\n1. Internet connection check करें\n2. बाद में कोशिश करें`);
+            } finally {
+                // Restore signup button
+                signupBtn.innerHTML = originalText;
+                signupBtn.disabled = false;
             }
-
-            // Create new user
-            const newUser = {
-                id: 'USER' + Date.now(),
-                name: name,
-                mobile: mobile,
-                password: password,
-                email: email || null,
-                createdAt: new Date().toISOString(),
-                lastLogin: new Date().toISOString()
-            };
-
-            // Save user
-            registeredUsers.push(newUser);
-            localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-
-            // Save to database
-            saveUserToDatabase(newUser);
-
-            // Auto login
-            currentUser = { type: 'user', mobile: mobile, name: name, email: email };
-            loginModal.classList.add('hidden');
-            updateUI();
-            clearSignupForm();
-
-            alert(`🎉 अकाउंट सफलतापूर्वक बना गया!\n\nस्वागत है ${name}!\n\nआपका मोबाइल नंबर: ${mobile}\nअब आप सभी सेवाओं का उपयोग कर सकते हैं।`);
         }
 
         function showSignupForm() {
@@ -1558,7 +1692,7 @@
             }
         }
 
-        async function updateUserInJsonBin(updatedUser) {
+        async function updateUserInJsonBinDatabase(updatedUser) {
             const binId = databaseConfig.binId;
             const apiKey = databaseConfig.apiKey;
             
@@ -1567,10 +1701,13 @@
             }
             
             try {
+                console.log('💾 Updating user in JSONBin:', updatedUser.name);
+                
                 // First, get existing data
                 const getResponse = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
                     headers: {
-                        'X-Master-Key': apiKey
+                        'X-Master-Key': apiKey,
+                        'X-Bin-Meta': 'false'
                     }
                 });
                 
@@ -1582,22 +1719,36 @@
                     
                     if (!data.applications) data.applications = [];
                     if (!data.users) data.users = [];
+                } else if (getResponse.status === 404) {
+                    console.log('🆕 Bin not found, creating new data structure');
+                } else {
+                    throw new Error(`Failed to fetch existing data: ${getResponse.status}`);
                 }
                 
                 // Update user in data
                 const userIndex = data.users.findIndex(u => u.mobile === updatedUser.mobile);
                 if (userIndex >= 0) {
                     data.users[userIndex] = updatedUser; // Update existing user
+                    console.log('✏️ Updated existing user in JSONBin');
                 } else {
                     data.users.push(updatedUser); // Add new user
+                    console.log('➕ Added new user to JSONBin');
                 }
                 
                 data.lastUpdated = new Date().toISOString();
                 data.lastUserUpdate = {
                     user: updatedUser.name,
                     mobile: updatedUser.mobile,
-                    timestamp: new Date().toISOString()
+                    action: userIndex >= 0 ? 'updated' : 'added',
+                    timestamp: new Date().toISOString(),
+                    device: updatedUser.lastDevice || getDeviceInfo()
                 };
+                
+                console.log('📊 JSONBin data summary:', {
+                    totalUsers: data.users.length,
+                    totalApplications: data.applications.length,
+                    lastUpdate: data.lastUpdated
+                });
                 
                 // Save updated data
                 const updateResponse = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
@@ -1609,11 +1760,128 @@
                     body: JSON.stringify(data)
                 });
 
-                if (!updateResponse.ok) {
-                    throw new Error('Failed to update JSONBin with user data');
+                if (updateResponse.ok) {
+                    const result = await updateResponse.json();
+                    console.log('✅ JSONBin updated successfully:', result.metadata);
+                } else {
+                    const errorText = await updateResponse.text();
+                    throw new Error(`Failed to update JSONBin: ${updateResponse.status} - ${errorText}`);
                 }
             } catch (error) {
-                console.error('JSONBin user update error:', error);
+                console.error('❌ JSONBin user update error:', error);
+                throw error;
+            }
+        }
+
+        async function saveUserToJsonBinDatabase(newUser) {
+            const binId = databaseConfig.binId;
+            const apiKey = databaseConfig.apiKey;
+            
+            console.log('💾 Saving new user to JSONBin:', newUser.name);
+            
+            try {
+                let finalBinId = binId;
+                
+                // If no Bin ID, create a new bin
+                if (!finalBinId) {
+                    console.log('🆕 Creating new JSONBin for user data...');
+                    const createResponse = await fetch('https://api.jsonbin.io/v3/b', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': apiKey,
+                            'X-Bin-Name': databaseConfig.binName || 'mushtaq-store-data'
+                        },
+                        body: JSON.stringify({
+                            applications: [],
+                            users: [newUser],
+                            createdAt: new Date().toISOString(),
+                            storeName: 'Mushtaq Store',
+                            version: '1.0'
+                        })
+                    });
+                    
+                    if (createResponse.ok) {
+                        const result = await createResponse.json();
+                        finalBinId = result.metadata.id;
+                        
+                        // Update config with new Bin ID
+                        databaseConfig.binId = finalBinId;
+                        localStorage.setItem('databaseConfig', JSON.stringify(databaseConfig));
+                        
+                        console.log('✅ New bin created with user:', finalBinId);
+                        return;
+                    } else {
+                        throw new Error('Failed to create new bin');
+                    }
+                }
+                
+                // Use existing bin - get current data and add user
+                const getResponse = await fetch(`https://api.jsonbin.io/v3/b/${finalBinId}`, {
+                    headers: {
+                        'X-Master-Key': apiKey,
+                        'X-Bin-Meta': 'false'
+                    }
+                });
+                
+                let data = { applications: [], users: [] };
+                
+                if (getResponse.ok) {
+                    const currentData = await getResponse.json();
+                    data = currentData.record;
+                    
+                    if (!data.applications) data.applications = [];
+                    if (!data.users) data.users = [];
+                    
+                    console.log('📊 Current JSONBin data:', {
+                        users: data.users.length,
+                        applications: data.applications.length
+                    });
+                } else if (getResponse.status === 404) {
+                    console.log('🆕 Bin not found, will create new data structure');
+                } else {
+                    throw new Error(`Failed to fetch existing data: ${getResponse.status}`);
+                }
+                
+                // Check if user already exists
+                const existingUserIndex = data.users.findIndex(u => u.mobile === newUser.mobile);
+                if (existingUserIndex >= 0) {
+                    console.log('⚠️ User already exists in JSONBin, updating...');
+                    data.users[existingUserIndex] = newUser;
+                } else {
+                    console.log('➕ Adding new user to JSONBin');
+                    data.users.push(newUser);
+                }
+                
+                data.lastUpdated = new Date().toISOString();
+                data.lastUserSignup = {
+                    user: newUser.name,
+                    mobile: newUser.mobile,
+                    timestamp: new Date().toISOString(),
+                    device: newUser.signupDevice
+                };
+                
+                // Save updated data
+                const updateResponse = await fetch(`https://api.jsonbin.io/v3/b/${finalBinId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': apiKey
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (updateResponse.ok) {
+                    const result = await updateResponse.json();
+                    console.log('✅ User saved to JSONBin successfully:', result.metadata);
+                    console.log('📊 Total users in database:', data.users.length);
+                } else {
+                    const errorText = await updateResponse.text();
+                    throw new Error(`Failed to save user to JSONBin: ${updateResponse.status} - ${errorText}`);
+                }
+                
+            } catch (error) {
+                console.error('❌ JSONBin user save error:', error);
                 throw error;
             }
         }
@@ -2661,5 +2929,5 @@
         // Initialize the app
         initApp();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9840f726c26a1b98',t:'MTc1ODcwMzEwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9841023084fd54c6',t:'MTc1ODcwMzU1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
